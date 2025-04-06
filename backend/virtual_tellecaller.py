@@ -12,8 +12,7 @@ from dotenv import load_dotenv
 import speech_recognition as sr
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
-# from langchain_core.pydantic_v1 import BaseModel, Field
-from pydantic import BaseModel , Field
+from pydantic import BaseModel, Field
 from langchain_community.vectorstores import FAISS
 from langchain_community.utilities import WikipediaAPIWrapper
 from langchain_community.tools import WikipediaQueryRun
@@ -35,81 +34,125 @@ semaphore = asyncio.Semaphore(MAX_CONCURRENT_TTS)
 memory = MemorySaver()
 
 
-# ensure folder exists
+if not os.path.exists("data/rag_data.txt"):
+    with open("data/rag_data.txt", "w", encoding="utf-8", errors="ignore") as f:
+        f.write("This is random text for initialization.")
+if not os.path.exists("data/system_prompt.txt"):
+    with open("data/system_prompt.txt", "w", encoding="utf-8", errors="ignore") as f:
+        f.write("This is random text for initialization.")
 
-os.makedirs("vectorstore", exist_ok=True)
-os.makedirs("data", exist_ok=True)
+business_data = ""
+with open("data/rag_data.txt", "r", encoding="utf-8", errors="ignore") as f:
+    business_data = f.read()
+
+
+system_prompt = ""
+
+with open("data/system_prompt.txt", "r", encoding="utf-8", errors="ignore") as f:
+    system_prompt = f.read()
+
 
 
 class State(TypedDict):
     messages: list[BaseMessage]
-
     response: str  # the response to the query
     context_docs: List[str]  # the context documents
     path: str  # the path to the current state
     history_docs: List[str]  # the history documents
-    query : str # the query from the user
-
+    query: str  # the query from the user
+    # system_prompt: str  # the system prompt for the chatbot
+    # rag_data: str  # the data used for RAG
+    business_name: str  # the name of the business
 
 
 class RouteQuery(BaseModel):
     datasource: Literal["vectorstore", "wiki_search", "llm", "exit"] = Field(
         ...,
-        description="Route query to appropriate source: 'vectorstore' for Nirma-related queries, 'wiki_search' for general knowledge, 'llm' for unrelated questions, and 'exit' for quitting.",
+        description="Route query to appropriate source: 'vectorstore' for RAG , 'wiki_search' for general knowledge, 'llm' for unrelated questions, and 'exit' for quitting.",
     )
 
 
-route_prompt = ChatPromptTemplate(
-    [
-        (
-            "system",
-            """
-        You are an AI assistant responsible for routing user queries to the most appropriate source. You have access to:
+def route(state: State):
 
-        1. **Nirma University Vectorstore** - Contains detailed information about Nirma University, including:
-           - Historical Background  
-           - Academic Programs  
-           - Fee Structure  
-           - Accreditations and Rankings  
-           - Placement Statistics  
-           - Internship Opportunities  
-           - Infrastructure and Facilities  
-           - Campus Life and Extracurricular Activities  
-           - Student Support Services  
-           - Alumni Network  
+    business_name = state["business_name"]
+    # business_data = state["rag_data"]
 
-        2. **Wikipedia Search (wiki_search)** - Use this for general knowledge questions that are **not related** to Nirma University.
+    llm = ChatGroq(
+        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.1-8b-instant"
+    )
 
-        3. **LLM** - Handle all **other queries** using LLM, including random, open-ended, or unclear questions.
+    # Extract keywords from the business name and data
+    keywords = llm.invoke(
+        f"Extract the most important keywords or topic titles from the business name '{business_name}' and the data '{business_data}' that we used to route the query to the appropriate source. Only return the keywords or topic titles, separated by commas. Do not include any other text or explanation. "
+    )
+    # remove think from the response
+    keywords = keywords.content
+    # keywords = keywords.content.split("</think>")[-1].strip()
 
-        4. **Exit** - If the user explicitly states they want to exit (e.g., "exit," "quit," "end chat"), return `"exit"`.
+    # print("Keywords : ", keywords)
+
+    route_prompt = ChatPromptTemplate(
+        [
+            (
+                "system",
+                f"""
+
+        You are an AI assistant responsible for routing user queries to the most appropriate source.
+        You have access to:
+        1. {business_name} Vectorstore - Contains detailed information about {business_name} which includes {keywords}
+        2. Wikipedia Search (wiki_search) - Use this for general knowledge questions that are not related to {business_name}.
+        3. LLM - Handle all other queries using LLM, including random, open-ended, or unclear questions.
+        4. Exit - If the user explicitly states they want to exit (e.g., "exit," "quit," "end chat"), return "exit".
 
         **Routing Rules:**
-        - If the query is **about Nirma University**, route it to **vectorstore**.
-        - If the query is **general factual knowledge**, use **wiki_search**.
-        - **All other queries, by default, should go to LLM**.
-        - If the query is **about exiting**, return `"exit"`.
-
+        - If the query is about {business_name}, route it to vectorstore.
+        - If the query is general factual knowledge, use wiki_search.
+        - All other queries, by default, should go to LLM.
+        - If the query is about exiting, return "exit".
         Always ensure queries are routed efficiently and accurately.
+
+        Return the response in this format:
+        
+
         """,
-        ),
-        ("human", "{query}"),
-    ]
-)
+            ),
+            ("human", "{query}"),
+        ]
+    )
 
-llm = ChatGroq(
-    groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.3-70b-versatile"
-)
+    # print("Route Prompt : ", route_prompt)
+    llm = ChatGroq(
+        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.1-8b-instant"
+    )
 
-llm = llm.with_structured_output(RouteQuery)
+    llm = llm.with_structured_output(RouteQuery)
 
-router = route_prompt | llm
+    router = route_prompt | llm
 
-router.invoke("Ok thankyou and See you later")
+    # print("Router : ", router)
 
-
-def route(state: State):
     query = state["messages"][-1].content
+
+    # data = state["rag_data"]
+
+
+    # _______________________________________________________________
+
+    # with open("backend/data/rag_data.txt", "w", encoding="utf-8", errors="ignore") as f:
+    #     f.write(data)
+
+    loader = TextLoader("data/rag_data.txt")
+    data = loader.load()
+
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    docs = text_splitter.split_documents(data)
+    # print(docs)
+
+    embeddings = HuggingFaceEmbeddings()
+
+    db = FAISS.from_documents(docs, embedding=embeddings)
+    db.save_local("backend/vectorstore/rag_db")
+
     source = router.invoke({"query": query})
     if source.datasource.lower() == "vectorstore":
         return "vectorstore"
@@ -123,25 +166,11 @@ def route(state: State):
         return "end"
 
 
-# from langchain_chroma import Chroma
-loader = TextLoader("data/nirma.txt")
-data = loader.load()
-
-
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-docs = text_splitter.split_documents(data)
-# print(docs)
-
-embeddings = HuggingFaceEmbeddings()
-
-db = FAISS.from_documents(docs, embedding=embeddings)
-db.save_local("vectorstore/rag_db")
-
-
 def retrieve_docs(state: State):
+    embeddings = HuggingFaceEmbeddings()
     print("Reached RAG")
     vector_store = FAISS.load_local(
-        "vectorstore/rag_db",
+        "backend/vectorstore/rag_db",
         embeddings=embeddings,
         allow_dangerous_deserialization=True,
     )
@@ -162,10 +191,10 @@ def wiki_search(state: State):
 
 
 def llm_query(state: State):
-
+    business_name = state["business_name"]
     messages = [
         SystemMessage(
-            content="You are an Helpful AI Assistant . Named NirmaBot , Your task is to talk with user in human like manner and help them with their queries."
+            content=f"You are an Helpful AI assistant designed to assist users with their queries. Your goal is to provide helpful, engaging, and natural responses—just like a real human assistant. Generate your name from the {business_name} and respond to the user query. "
         ),
         HumanMessage(content=state["messages"][-1].content),
     ]
@@ -188,12 +217,14 @@ def history_retriver(state: State):
     query = state["messages"][-1].content
 
     llm = ChatGroq(
-        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.3-70b-versatile"
+        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.1-8b-instant"
     )
     # Load existing history
     try:
 
-        with open("data/history.txt", "r", encoding="utf-8", errors="ignore") as f:
+        with open(
+            "data/history.txt", "r", encoding="utf-8", errors="ignore"
+        ) as f:
             history_data = f.read()
 
     except FileNotFoundError:
@@ -225,6 +256,8 @@ def history_retriver(state: State):
 
     response = llm.invoke(history_text)
 
+    # response = response.content.split("</think>")[-1]
+
     with open("data/history.txt", "w", encoding="utf-8", errors="ignore") as f:
 
         f.write(response.content)
@@ -238,10 +271,10 @@ def history_retriver(state: State):
 
     vector_store1 = FAISS.from_documents(docs, embedding=embeddings)
 
-    vector_store1.save_local("vectorstore/history_db")
+    vector_store1.save_local("backend/vectorstore/history_db")
 
     vector_store = FAISS.load_local(
-        "vectorstore/history_db",
+        "backend/vectorstore/history_db",
         embeddings=embeddings,
         allow_dangerous_deserialization=True,
     )
@@ -258,43 +291,20 @@ def history_retriver(state: State):
     # test the function
 
 
-# print(history_retriver({"messages": [HumanMessage(content="What is nirma ")]}))
-
-
 llm = ChatGroq(
     groq_api_key=os.environ["GROQ_Key"],
-    # model_name = 'deepseek-r1-distill-llama-70b'
-    model_name="llama-3.3-70b-versatile",
+    # model_name = 'llama-3.1-8b-instant'
+    model_name="llama-3.1-8b-instant",
 )
 
 
 def chatbot(state: State):
+    
 
-    system_prompt = """
-        You are NirmaBot, an AI assistant designed to interact with users in an ultra-friendly, human-like manner in 4-5 lines only.Your goal is to provide helpful, engaging, and natural responses—just like a real human assistant.
-
-        ### How to Respond:
-        - Prioritize context_docs (retrieved knowledge) for answering user queries accurately.
-        - Use history_docs **only if the current query relates to past discussions**.
-        - If a query is unrelated to history, do **not** use past information in your response.
-        
-
-        ### Guidelines for a Natural Tone:
-        ✅ Be warm & friendly - Sound like a helpful human, not a bot.  
-        ✅ Use casual phrasing - Like chatting with a friend or a helpful colleague.  
-
-        ### Important Rule:
-        - **Never use history_docs unless explicitly relevant to the user's current query.**  
-
-        Your main job? **Focus on the user's request at the moment** while maintaining natural and helpful conversations!
-    """
-
-    # print("Previous History : ")
-
-    # print(state["history_docs"])
     context = " ".join(state["context_docs"]).join(state["history_docs"])
 
     full_system_prompt = system_prompt + " " + context
+    
 
     messages = [
         SystemMessage(content=full_system_prompt),
@@ -303,7 +313,9 @@ def chatbot(state: State):
 
     print("Reached LLM")
     response = llm.invoke(messages)
-    response = response.content.split("</think>")[-1]
+    response = response.content
+
+    # response = response.content.split("</think>")[-1]
     # print("Response : ", response)
     return {
         "response": str(response),
@@ -316,39 +328,12 @@ mic = sr.Microphone()
 
 
 def speech_to_text(state: State):
-    # print(state)
-    # with mic as source:
-    #     recognizer.adjust_for_ambient_noise(source)
 
-    #     while True:
-    #         print("Listening... Speak now!")
-    #         audio = recognizer.listen(
-    #             source, phrase_time_limit=5
-    #         )  # listen for the first phrase and extract it into audio data
-    #         try:
-    #             query = recognizer.recognize_google(audio)
+    query = state["query"]
+    # # print("Query : ", query)
+    messages = state.get("messages", [])
 
-    #             print(f"Query: {query}")
-    #             break
-
-    #         except sr.UnknownValueError:
-    #             print("Could not understand audio")
-    #         except sr.RequestError:
-    #             print("Could not request results; check your network connection")
-    #         except sr.WaitTimeoutError:
-    #             print("Timeout; no speech detected")
-    #         except Exception as e:
-    #             print("Error:", e)
-    #             break
-
-
-        #use query which used to invoke the graph
-
-        query = state["query"]
-        # print("Query : ", query)
-        messages = state.get("messages", [])
-
-        return {"messages": messages + [HumanMessage(content=query)]}
+    return {"messages": messages + [HumanMessage(content=query)]}
 
 
 import os
@@ -476,23 +461,39 @@ builder.add_edge("history", "chatbot")
 
 # builder.add_edge("chatbot", "tts")
 # builder.add_edge("tts", "stt")
-
-# graph = builder.compile(checkpointer=memory)
 graph = builder.compile()
 
 
-# from IPython.display import Image, display
-
-# display(Image(graph.get_graph().draw_mermaid_png()))
-
-
-# config = {"configurable": {"thread_id": "2"}}
-# response = graph.invoke({"query": ""}, config=config, stream_mode="values")
+# --------------------------------------------
 
 
 
-def get_response(query):
+
+
+# def get_response(business_name, query, rag_data, system_prompt):
+#     config = {"configurable": {"thread_id": "2"}}
+#     # use query as input for the graph
+#     response = graph.invoke(
+#         {
+#             "business_name": business_name,
+#             "query": query,
+#             "rag_data": rag_data,
+#             "system_prompt": system_prompt,
+#         },
+#         config=config,
+#         stream_mode="values",
+#     )
+#     return response
+
+
+def generate_output(business_name,query):
     config = {"configurable": {"thread_id": "2"}}
     # use query as input for the graph
-    response = graph.invoke({"query": query}, config=config, stream_mode="values")
+    response = graph.invoke(
+        {
+            "business_name": business_name,
+            "query": query},
+        config=config,
+        stream_mode="values",
+    )
     return response

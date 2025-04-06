@@ -15,17 +15,21 @@ interface CallSectionProps {
     businessInfo: string,
     systemPrompt: string,
     sourceNumber: string,
-    destinationNumber: string,
+    destinationNumber :string,
 }
 
 export function CallSection() {
+
+
+
+
 
     const [formData, setFormData] = useState<CallSectionProps>({
         businessName: "",
         businessInfo: "",
         systemPrompt: "",
         sourceNumber: "",
-        destinationNumber: ""
+        destinationNumber:"",
     })
 
 
@@ -43,6 +47,7 @@ export function CallSection() {
 
     const handleSubmit = async(e:React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault()
+        console.log("formData", formData)
         
         try{
             const response = await fetch("http://127.0.0.1:5000/information", {
@@ -51,12 +56,16 @@ export function CallSection() {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify(formData),
+
+                
               });
 
 
             if(!response.ok){
                 throw new Error("Network response was not ok")
               }
+
+           
               
             const data = await response.json()
             console.log("Response data:", data)
@@ -135,6 +144,8 @@ export function CallSection() {
                         <Input type="text" id="destinationNumber" name="destinationNumber" placeholder="Enter your destination number"
                             className="border border-gray-300 rounded-md p-2" required onChange={handleChange} />
                     </div>
+
+
                     <div className="items-center justify-center w-full flex flex-col gap-1">
 
 

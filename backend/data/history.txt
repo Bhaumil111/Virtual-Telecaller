@@ -1,3 +1,11 @@
-History_Docs: 
-* The user requested information about "Nina", with no additional context provided.
-* Previous mentions include "My mom" and other unrelated topics such as "Nirma", the AI's name, and a comment about the AI "reading the user's mind".
+**History_Docs:**
+
+* You inquired about Glaceon (no discussion points).
+* You inquired about Citibank, and I provided possible topics for discussion.
+* You chose to explore topic **1. Services (credit cards, loans, mortgages, etc.)** about Citibank.
+* Your current inquiry is about Google ranking.
+
+**New Discussion Point:**
+You would like to discuss Google ranking.
+
+Since your current inquiry is unrelated to the previous conversation about Citibank, I will create a new discussion point. If you'd like to return to the Citibank conversation, please let me know.
