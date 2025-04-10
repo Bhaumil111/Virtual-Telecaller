@@ -34,23 +34,25 @@ semaphore = asyncio.Semaphore(MAX_CONCURRENT_TTS)
 memory = MemorySaver()
 
 
-if not os.path.exists("data/rag_data.txt"):
-    with open("data/rag_data.txt", "w", encoding="utf-8", errors="ignore") as f:
-        f.write("This is random text for initialization.")
-if not os.path.exists("data/system_prompt.txt"):
-    with open("data/system_prompt.txt", "w", encoding="utf-8", errors="ignore") as f:
-        f.write("This is random text for initialization.")
+# if not os.path.exists("data/rag_data.txt"):
+#     with open("data/rag_data.txt", "w", encoding="utf-8", errors="ignore") as f:
+#         f.write("This is random text for initialization.")
+#         f.close() # close the file after writing
+# if not os.path.exists("data/system_prompt.txt"):
+#     with open("data/system_prompt.txt", "w", encoding="utf-8", errors="ignore") as f:
+#         f.write("This is random text for initialization.")
 
 business_data = ""
 with open("data/rag_data.txt", "r", encoding="utf-8", errors="ignore") as f:
     business_data = f.read()
+    f.close() # close the file after reading
 
 
 system_prompt = ""
 
 with open("data/system_prompt.txt", "r", encoding="utf-8", errors="ignore") as f:
     system_prompt = f.read()
-
+    f.close() # close the file after reading
 
 
 class State(TypedDict):
@@ -78,7 +80,7 @@ def route(state: State):
     # business_data = state["rag_data"]
 
     llm = ChatGroq(
-        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.1-8b-instant"
+        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.3-70b-versatile"
     )
 
     # Extract keywords from the business name and data
@@ -122,7 +124,7 @@ def route(state: State):
 
     # print("Route Prompt : ", route_prompt)
     llm = ChatGroq(
-        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.1-8b-instant"
+        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.3-70b-versatile"
     )
 
     llm = llm.with_structured_output(RouteQuery)
@@ -217,7 +219,7 @@ def history_retriver(state: State):
     query = state["messages"][-1].content
 
     llm = ChatGroq(
-        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.1-8b-instant"
+        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.3-70b-versatile"
     )
     # Load existing history
     try:
@@ -226,6 +228,7 @@ def history_retriver(state: State):
             "data/history.txt", "r", encoding="utf-8", errors="ignore"
         ) as f:
             history_data = f.read()
+            f.close()  # close the file after reading
 
     except FileNotFoundError:
         history_data = ""
@@ -261,6 +264,7 @@ def history_retriver(state: State):
     with open("data/history.txt", "w", encoding="utf-8", errors="ignore") as f:
 
         f.write(response.content)
+        f.close()
 
     loader = TextLoader("data/history.txt")
 
@@ -293,8 +297,8 @@ def history_retriver(state: State):
 
 llm = ChatGroq(
     groq_api_key=os.environ["GROQ_Key"],
-    # model_name = 'llama-3.1-8b-instant'
-    model_name="llama-3.1-8b-instant",
+    # model_name = 'llama-3.3-70b-versatile'
+    model_name="llama-3.3-70b-versatile",
 )
 
 
