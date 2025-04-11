@@ -9,10 +9,10 @@ export default function home(){
      from-gray-50 to-gray-100  ">
 
       <main>
-      <Navbar />
+
       <HeroSection />
       <CardSection />
-      <CallSection />
+
 
 
       </main>

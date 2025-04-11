@@ -7,3 +7,9 @@ dist
 # Local env files
 .env.local
 .env.development.local
+
+
+
+#testdata folder
+
+test_data

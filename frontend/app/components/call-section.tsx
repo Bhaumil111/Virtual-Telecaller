@@ -96,12 +96,7 @@ export function CallSection() {
             console.error("Error:", error)
         }
 
-        finally{
-            // redirect to the submit handler page
 
-            redirect("/submit-handler")
-
-        }
 
 
     }
@@ -116,14 +111,14 @@ export function CallSection() {
                 <div className="flex items-center mb-4 gap-1">
 
                     <Phone className="h-8 w-8 text-emerald-600" />
-                    <h2 className="text-2xl font-bold text-gray-800"> Call Section</h2>
+                    <h2 className="text-4xl font-bold text-gray-800"> Call Section</h2>
                 </div>
 
-                <p className="text-emerald-600 font-bold text-center mb-10 "> Enter your Details to get started
+                <p className="text-emerald-600 text-xl font-bold text-center mb-10 "> Enter your Details to get started
                 </p>
 
 
-                <form className="items-center justify-center w-66 md:w-96" onSubmit={handleSubmit}
+                <form className="items-center justify-center w-66 md:w-3/4" onSubmit={handleSubmit}
                 >
 
                     <div className="mb-4 w-full items-center justify-center flex flex-col gap-1">
@@ -159,10 +154,10 @@ export function CallSection() {
 
 
                         <button type="submit" 
-                        className="bg-emerald-600 text-white font-bold py-2 px-4 rounded-md hover:bg-emerald-700  w-36  hover:cursor-pointer">
+                        className="bg-emerald-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-emerald-700  w-36  hover:cursor-pointer">
                         
                         
-                        Start Call</button>
+                        Initate Calls</button>
 
                     </div>
 

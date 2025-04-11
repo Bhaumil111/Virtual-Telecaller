@@ -6,21 +6,28 @@ import os
 from dotenv import load_dotenv
 from virtual_tellecaller import generate_output
 from flask_cors import CORS
-from urllib.parse import quote_plus
-
 from fetch_call_details import fetch_call_logs
 
 from flask import jsonify
+import requests
 
 # Initialize the Flask app
 load_dotenv()
 app = Flask(__name__)
 CORS(app)
-
-
 userdata = {}
 
-# just start the langgraph code by calling the function and then call the function in the main function
+
+def get_ngrok_url():
+    try:
+        tunnels = requests.get("http://localhost:4040/api/tunnels").json()["tunnels"]
+        return tunnels[0]["public_url"]  # Corrected line
+    except Exception as e:
+        print(f"Error fetching ngrok URL: {e}")
+        return None
+
+
+ngrok_url = get_ngrok_url()
 
 ai_response = generate_output("", "")
 
@@ -159,14 +166,14 @@ def voice():
         method="POST",
         language="en-US",
         speechTimeout="auto",
-        actionOnEmptyResult=True,
         speechModel="deepgram_nova-2",
+        actionOnEmptyResult=True,
         timeout=5,
     )
     response.pause(length=2)
     response.append(gather)
-    # response.say("Let me think for a moment.", language="en-US", voice="Polly.Matthew")
-    response.pause(length=20)
+    # response.say("Please wait while I process your query.", language="en-US", voice="Polly.Matthew")
+    response.pause(length=8)
 
     return Response(str(response), content_type="text/xml")
 
@@ -179,40 +186,56 @@ def process_voice():
     speech_text = request.form.get("SpeechResult", "").strip()
 
     if not speech_text:
-        response.say("I'm sorry, I didn't catch that. Please try again.", language="en-US", voice="Polly.Matthew")
+        response.say(
+            "I'm sorry, I didn't catch that. Please try again.",
+            language="en-US",
+            voice="Polly.Matthew",
+        )
         gather = Gather(
             input="speech",
             action="/process_voice",
             method="POST",
             language="en-US",
-            # speechTimeout="auto",
+            speechTimeout="auto",
             actionOnEmptyResult=True,
             speechModel="deepgram_nova-2",
             timeout=5,
         )
         response.pause(length=2)
         response.append(gather)
-        response.pause(length=20)
+        response.pause(length=6)
         return Response(str(response), content_type="text/xml")
 
     print(f"User said: {speech_text}")
 
     if any(word in speech_text.lower() for word in exit_words):
-        response.say("Thank you for having a conversation with me.", language="en-US", voice="Polly.Matthew")
+        response.say(
+            "Thank you for having a conversation with me.",
+            language="en-US",
+            voice="Polly.Matthew",
+        )
         response.hangup()
         return Response(str(response), content_type="text/xml")
 
     # Inform the user that their query is being processed.
-    response.say("Please wait while I process your query.", language="en-US", voice="Polly.Matthew")
-    
+    response.say(
+        "Please wait while I process your query.",
+        language="en-US",
+        voice="Polly.Matthew",
+    )
+
     # Increase pause to allow maximum time for LLM response.
-    response.pause(length=20)  # Increase this duration as needed.
-    
+    response.pause(length=5)  # Main processing time for LLM response.
+
     # Now call your LLM (this is still blocking, so ensure the pause covers your processing time).
     ai_response = generate_output(business_name, speech_text)
 
     if not ai_response or ai_response["response"] == "":
-        response.say("Thank you for having a conversation with me.", language="en-US", voice="Polly.Matthew")
+        response.say(
+            "Thank you for having a conversation with me.",
+            language="en-US",
+            voice="Polly.Matthew",
+        )
         response.hangup()
         return Response(str(response), content_type="text/xml")
 
@@ -233,7 +256,7 @@ def process_voice():
     )
     response.pause(length=2)
     response.append(gather)
-    response.pause(length=20)
+    response.pause(length=5)
 
     return Response(str(response), content_type="text/xml")
 
@@ -241,25 +264,21 @@ def process_voice():
 @app.route("/make_call", methods=["POST", "GET"])
 def make_call():
 
-    host = request.host
+    host = f"{ngrok_url}/voice"
 
     """Initiate a call to the user's phone number."""
 
     source_number = userdata.get("sourceNumber")
 
-    print(f"Host: {host}")
+    print(f"Host URL: {host}")
     print(f"Source Number: {source_number}")
 
     try:
         call = client.calls.create(
-            url="https://0f9a-103-238-107-97.ngrok-free.app/voice",
-            # url =f"https://{host}/voice",
-            # to=TO_PHONE_NUMBER,
-            from_=TWILIO_PHONE_NUMBER,
-            # from_=source_number,
-            # to=destination_number,
+            url=f"{ngrok_url}/voice",
+            from_=source_number,
             to=call_queue[0],
-            status_callback=f"https://0f9a-103-238-107-97.ngrok-free.app/call_status",
+            status_callback=f"{ngrok_url}/call_status",
             status_callback_event=["completed"],
             status_callback_method="POST",
         )
@@ -290,11 +309,10 @@ def call_status():
         next_number = call_queue.pop(0)
 
         client.calls.create(
-            url="https://0f9a-103-238-107-97.ngrok-free.app/voice",
-            # url=f"https://{request.host}/voice",
+            url=f"{ngrok_url}/voice",
             to=next_number,
             from_=TWILIO_PHONE_NUMBER,
-            status_callback=f"https://0f9a-103-238-107-97.ngrok-free.app/call_status",
+            status_callback=f"{ngrok_url}/call_status",
             status_callback_event=["completed"],
             status_callback_method="POST",
         )
@@ -305,10 +323,9 @@ def call_status():
     return ("All calls completed", 200)
 
 
-
 @app.route("/call_details", methods=["GET"])
 def call_logs():
-    """ Fetch call details"""
+    """Fetch call details"""
 
     try:
         call_details = fetch_call_logs()
@@ -316,6 +333,7 @@ def call_logs():
     except Exception as e:
         print(f"Error fetching call details:{e}")
         return jsonify({"error": "Failed to fetch call details"}), 500
+
 
 if __name__ == "__main__":
     app.run(port=5000, debug=False, use_reloader=False)
