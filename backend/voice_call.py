@@ -8,6 +8,8 @@ from virtual_tellecaller import generate_output
 from flask_cors import CORS
 from urllib.parse import quote_plus
 
+from fetch_call_details import fetch_call_logs
+
 from flask import jsonify
 
 # Initialize the Flask app
@@ -158,6 +160,8 @@ def voice():
         language="en-US",
         speechTimeout="auto",
         actionOnEmptyResult=True,
+        speechModel="deepgram_nova-2",
+        timeout=5,
     )
     response.pause(length=2)
     response.append(gather)
@@ -181,8 +185,10 @@ def process_voice():
             action="/process_voice",
             method="POST",
             language="en-US",
-            speechTimeout="auto",
+            # speechTimeout="auto",
             actionOnEmptyResult=True,
+            speechModel="deepgram_nova-2",
+            timeout=5,
         )
         response.pause(length=2)
         response.append(gather)
@@ -222,6 +228,8 @@ def process_voice():
         language="en-US",
         speechTimeout="auto",
         actionOnEmptyResult=True,
+        speechModel="deepgram_nova-2",
+        timeout=5,
     )
     response.pause(length=2)
     response.append(gather)
@@ -296,6 +304,18 @@ def call_status():
 
     return ("All calls completed", 200)
 
+
+
+@app.route("/call_details", methods=["GET"])
+def call_logs():
+    """ Fetch call details"""
+
+    try:
+        call_details = fetch_call_logs()
+        return jsonify(call_details), 200
+    except Exception as e:
+        print(f"Error fetching call details:{e}")
+        return jsonify({"error": "Failed to fetch call details"}), 500
 
 if __name__ == "__main__":
     app.run(port=5000, debug=False, use_reloader=False)
