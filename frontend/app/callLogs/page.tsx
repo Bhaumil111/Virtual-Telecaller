@@ -63,24 +63,26 @@ export default function callDetails() {
 console.log("Data", data)
   // console.log("Data", data)
   return (
-
-    // render the data in a table format
-
-
-    <div className='bg-gradient-to-b from grayscale-50 to-gray-200 min-h-screen items-center   flex flex-col'>
-
-    <div className=" shadow-md rounded-md text-black mx-auto p-10 w-full">
-
-      <h1 className="text-2xl font-bold text-center mb-4">Call Logs</h1>
-      <p className="text-center text-gray-600 mb-6">Here are the details of your call</p>
-
-      <DataTable columns={columns} data = {data} />
-
+    <div className="bg-gradient-to-b from-gray-50 to-gray-200 
+                    dark:from-[#0d0d0d] dark:to-[#1a1a1a] 
+                    min-h-screen flex flex-col items-center 
+                    ">
+  
+      <div className="shadow-md rounded-md bg-white dark:bg-[#121212] 
+                      text-black dark:text-gray-200 mx-auto p-10 w-full 
+                      max-w-6xl ">
+  
+        <h1 className="text-2xl font-bold text-center mb-4">Call Logs</h1>
+        <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+          Here are the details of your call
+        </p>
+  
+        <DataTable columns={columns} data={data} />
+  
       </div>
-
     </div>
-
-  )
+  );
+  
 
 
 

@@ -11,13 +11,13 @@ const handleClick = () =>{
     return(
 
 
-        <section className = " py-10 lg:py-15">
+        <section className = " py-10 lg:py-15 ">
             <div className = " mx-auto px-4 sm:px-6 lg:px-8">
                 <div className = "text-center mb-12">
-                    <h1 className = "text-3xl  lg:text-6xl font-bold text-gray-900">
-                    AI <span className="text-emerald-600">Telecaller</span>
+                    <h1 className = "text-3xl  lg:text-6xl font-bold text-gray-900 dark:text-gray-400">
+                    AI <span className="text-emerald-600 dark:text-emerald-300">Telecaller</span>
                         </h1>
-                    <p className = "mt-4 text-2xl text-black"> The AI-powered virtual telecaller that advertises your business effectively</p>
+                    <p className = "mt-4 text-2xl text-black dark:text-gray-300 "> The AI-powered virtual telecaller that advertises your business effectively</p>
 
 
 

@@ -1,1 +1,3 @@
-This is the call history file.
+History_Docs: 
+* No previous conversations or topics discussed.
+* This is the starting point for our conversation, and key points will be summarized here as we discuss.
