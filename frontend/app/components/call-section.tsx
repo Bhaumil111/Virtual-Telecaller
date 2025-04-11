@@ -8,6 +8,8 @@ import { Phone } from "lucide-react"
 
 import React from "react"
 import { useState } from "react"
+import { redirect } from  "next/navigation"
+import { SubmitHandler } from "@/app/components/submit-handler"
 
 
 interface CallSectionProps {
@@ -94,6 +96,13 @@ export function CallSection() {
             console.error("Error:", error)
         }
 
+        finally{
+            // redirect to the submit handler page
+
+            redirect("/submit-handler")
+
+        }
+
 
     }
     return (
@@ -149,8 +158,8 @@ export function CallSection() {
                     <div className="items-center justify-center w-full flex flex-col gap-1">
 
 
-                        <button type="submit" className="bg-emerald-600 text-white font-bold py-2 px-4 rounded-md hover:bg-emerald-700  w-36  hover:cursor-pointer"
-                         >
+                        <button type="submit" 
+                        className="bg-emerald-600 text-white font-bold py-2 px-4 rounded-md hover:bg-emerald-700  w-36  hover:cursor-pointer">
                         
                         
                         Start Call</button>

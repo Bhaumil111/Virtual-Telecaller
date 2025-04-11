@@ -1,7 +1,6 @@
 import {Navbar} from "@/app/components/navbar";
 import { HeroSection } from "@/app/components/hero-section";
 import { CardSection } from "@/app/components/card-section";
-import { UploadSection } from "@/app/components/upload-section";
 import { CallSection } from "./components/call-section";
 export default function home(){
 
@@ -13,7 +12,6 @@ export default function home(){
       <Navbar />
       <HeroSection />
       <CardSection />
-      {/* <UploadSection /> */}
       <CallSection />
 
 
