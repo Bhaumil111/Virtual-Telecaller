@@ -1,3 +1,6 @@
-History_Docs: 
-* No previous conversations or topics discussed.
-* This is the starting point for our conversation, and key points will be summarized here as we discuss.
+## History_Docs:
+### Blockchain Discussion
+1. **Introduction to Blockchain**: The user requested information about blockchain technology.
+2. **Key Aspects**: No specific aspects of blockchain were discussed, indicating the conversation has just begun.
+
+Please provide more context or continue the conversation for a more detailed summary.

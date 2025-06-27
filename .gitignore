@@ -8,8 +8,9 @@ dist
 .env.local
 .env.development.local
 
-
-
+/venv/
+/backend/.env
+/backend/venv/
 #testdata folder
 
 test_data

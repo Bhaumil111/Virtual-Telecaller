@@ -21,6 +21,7 @@ userdata = {}
 def get_ngrok_url():
     try:
         tunnels = requests.get("http://localhost:4040/api/tunnels").json()["tunnels"]
+        print(tunnels[0]["public_url"])
         return tunnels[0]["public_url"]  # Corrected line
     except Exception as e:
         print(f"Error fetching ngrok URL: {e}")
