@@ -21,6 +21,7 @@ userdata = {}
 def get_ngrok_url():
     try:
         tunnels = requests.get("http://localhost:4040/api/tunnels").json()["tunnels"]
+        print(tunnels[0]["public_url"])
         return tunnels[0]["public_url"]  # Corrected line
     except Exception as e:
         print(f"Error fetching ngrok URL: {e}")
@@ -225,7 +226,7 @@ def process_voice():
     )
 
     # Increase pause to allow maximum time for LLM response.
-    response.pause(length=2)  # Main processing time for LLM response.////////////////////////////////////////
+    response.pause(length=3)  # Main processing time for LLM response.////////////////////////////////////////
 
     # Now call your LLM (this is still blocking, so ensure the pause covers your processing time).
     ai_response = generate_output(business_name, speech_text)

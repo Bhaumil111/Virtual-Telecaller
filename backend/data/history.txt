@@ -1,9 +1,4 @@
 ## History_Docs: 
-No prior conversations to summarize. 
-
-### Current Discussion:
-1. **Introduction Request**: The user has asked for more information about the AI assistant.
-2. **AI Role**: The user is interacting with an AI summarizer designed to extract and summarize key topics from conversations.
-3. **AI Functionality**: The AI's primary goal is to maintain a concise record of discussion points based on frequency and importance.
-
-Please feel free to continue the conversation for more topics to be summarized.
+* Discussion about the menu was initiated by the user.
+* No specific details or questions about the menu were provided.
+* The conversation has just started, and more information is needed to provide a detailed summary.
