@@ -29,7 +29,7 @@ def get_ngrok_url():
 
 ngrok_url = get_ngrok_url()
 
-ai_response = generate_output("", "")
+# ai_response = generate_output("", "")
 
 
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
@@ -225,7 +225,7 @@ def process_voice():
     )
 
     # Increase pause to allow maximum time for LLM response.
-    response.pause(length=5)  # Main processing time for LLM response.
+    response.pause(length=2)  # Main processing time for LLM response.////////////////////////////////////////
 
     # Now call your LLM (this is still blocking, so ensure the pause covers your processing time).
     ai_response = generate_output(business_name, speech_text)
@@ -294,6 +294,8 @@ def make_call():
 
 @app.route("/call_status", methods=["POST"])
 def call_status():
+
+    call_queue.pop(0)  # Remove the first number from the queue as the call is complete
 
     print("Call Complete checking next call in queue")
 

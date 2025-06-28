@@ -26,3 +26,12 @@ nest_asyncio
 twilio
 pydub
 deepgram-sdk
+flask
+asyncio
+langchain-groq
+langchain-core
+langchain-community
+langchain-huggingface
+pydantic
+flask-cors
+pymongo

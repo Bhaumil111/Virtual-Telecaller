@@ -23,10 +23,26 @@ from typing import Literal, TypedDict, List
 from langgraph.graph import END, START, StateGraph
 from langchain_core.messages import SystemMessage, HumanMessage, BaseMessage, AIMessage
 from langgraph.checkpoint.memory import MemorySaver
+from pinecone import Pinecone
+import uuid
 
 
 load_dotenv()
 os.environ["GROQ_Key"] = os.getenv("GROQ_API_KEY")
+
+os.environ["PINECONE_API"] = os.getenv("PINECONE_API")
+os.environ["PINECONE_ENV"] = os.getenv("PINECONE_ENV")
+os.environ["PINECONE_HOST"] = os.getenv("PINECONE_HOST")
+
+
+pc = Pinecone(api_key=os.environ["PINECONE_API"])
+
+index = pc.Index(
+    host=os.environ["PINECONE_HOST"],
+)
+
+# print(f"Connected to Pinecone index: {index}")
+
 pygame.mixer.init()
 nest_asyncio.apply()
 MAX_CONCURRENT_TTS = 3
@@ -72,6 +88,47 @@ class RouteQuery(BaseModel):
         ...,
         description="Route query to appropriate source: 'vectorstore' for RAG , 'wiki_search' for general knowledge, 'llm' for unrelated questions, and 'exit' for quitting.",
     )
+
+
+def upload_chunks_to_pinecone(chunks , namespace):
+    records = []
+    for i, chunk in enumerate(chunks):
+        records.append(
+            {
+                "_id": str(uuid.uuid4()),
+                "text": chunk,  # <--- Use "text" instead of "chunk_text"
+                "chunk_index": i,  # optional metadata field
+            }
+        )
+
+    index.upsert_records(namespace =namespace,
+                         records=records)
+    # print(f"Uploaded {len(records)} records to Pinecone ')")
+
+
+def get_top_k_similar(query: str, session_id: str, k: int = 3):
+    """
+    This function retrieves the top k similar documents from the vector database based on the query.
+    """
+
+    results = index.search(
+        namespace=session_id,
+        query={"inputs": {"text": query}, "top_k": k},
+        fields=["text"],
+    )
+
+    hits = results.get("result", {}).get("hits", [])
+
+    text = ""
+    unique_texts = set()
+    for hit in hits:
+        content = hit.get("fields", {}).get("text", "").strip()
+        if content and content not in unique_texts:
+            text += content + "\n"
+            unique_texts.add(content)
+
+    return text
+
 
 
 def route(state: State):
@@ -134,26 +191,32 @@ def route(state: State):
     # print("Router : ", router)
 
     query = state["messages"][-1].content
+    namespace = state["business_name"].replace(" ","").lower()
 
-    # data = state["rag_data"]
 
-
-    # _______________________________________________________________
-
-    # with open("backend/data/rag_data.txt", "w", encoding="utf-8", errors="ignore") as f:
-    #     f.write(data)
-
-    loader = TextLoader("data/rag_data.txt")
+    loader = TextLoader("data/rag_data.txt",encoding="utf-8")
     data = loader.load()
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    docs = text_splitter.split_documents(data)
-    # print(docs)
+    text = ""
 
-    embeddings = HuggingFaceEmbeddings()
 
-    db = FAISS.from_documents(docs, embedding=embeddings)
-    db.save_local("backend/vectorstore/rag_db")
+    for doc in data:
+        text+= doc.page_content + "\n\n"
+
+    text_splitter= RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=20,
+            length_function=len,
+            is_separator_regex=False,
+            separators=["\n\n", "\n", " ", ".",","]
+        )
+
+
+    data_chunks = text_splitter.split_text(text)
+
+    upload_chunks_to_pinecone(data_chunks, namespace)
+    print("Data uploaded to Pinecone for namespace:", namespace)
+
 
     source = router.invoke({"query": query})
     if source.datasource.lower() == "vectorstore":
@@ -169,16 +232,14 @@ def route(state: State):
 
 
 def retrieve_docs(state: State):
-    embeddings = HuggingFaceEmbeddings()
     print("Reached RAG")
-    vector_store = FAISS.load_local(
-        "backend/vectorstore/rag_db",
-        embeddings=embeddings,
-        allow_dangerous_deserialization=True,
-    )
-    retriever = vector_store.as_retriever()
-    result = retriever.invoke(state["messages"][-1].content)
-    context = [doc.page_content for doc in result]
+
+    query = state["messages"][-1].content
+    namespace = state["business_name"].replace(" ","").lower()
+    top_k_result = get_top_k_similar(query, namespace, k=3)
+    context = top_k_result.split("\n") if top_k_result else []
+
+
     return {"context_docs": context, "messages": state["messages"]}
 
 
@@ -211,9 +272,12 @@ def llm_query(state: State):
 
 def history_retriver(state: State):
 
-    embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-mpnet-base-v2"
-    )
+    bussiness_name = state["business_name"]
+    namespace = "history_"+ bussiness_name.replace(" ", "").lower()
+
+    # embeddings = HuggingFaceEmbeddings(
+    #     model_name="sentence-transformers/all-mpnet-base-v2"
+    # )
     print("Reached History")
 
     query = state["messages"][-1].content
@@ -266,30 +330,49 @@ def history_retriver(state: State):
         f.write(response.content)
         f.close()
 
-    loader = TextLoader("data/history.txt")
+    loader = TextLoader("data/history.txt", encoding="utf-8")
 
     data = loader.load()
+    text = ""
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    docs = text_splitter.split_documents(data)
 
-    vector_store1 = FAISS.from_documents(docs, embedding=embeddings)
+    for doc in data:
+        text+= doc.page_content + "\n\n"
 
-    vector_store1.save_local("backend/vectorstore/history_db")
+    text_splitter= RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=20,
+            length_function=len,
+            is_separator_regex=False,
+            separators=["\n\n", "\n", " ", ".",","]
+        )
 
-    vector_store = FAISS.load_local(
-        "backend/vectorstore/history_db",
-        embeddings=embeddings,
-        allow_dangerous_deserialization=True,
-    )
+
+    data_chunks = text_splitter.split_text(text)
+
+    upload_chunks_to_pinecone(data_chunks, namespace)
+
+    # text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    # docs = text_splitter.split_documents(data)
+
+    # vector_store1 = FAISS.from_documents(docs, embedding=embeddings)
+
+    # vector_store1.save_local("backend/vectorstore/history_db")
+
+    # vector_store = FAISS.load_local(
+    #     "backend/vectorstore/history_db",
+    #     embeddings=embeddings,
+    #     allow_dangerous_deserialization=True,
+    # )
 
     # create retriever according to the user query
-    retriever = vector_store.as_retriever(search_kwargs={"k": 2})
+    # retriever = vector_store.as_retriever(search_kwargs={"k": 2})
 
-    result = retriever.invoke(query)
+    # result = retriever.invoke(query)
 
-    history = [doc.page_content for doc in result]
-
+    # history = [doc.page_content for doc in result]
+    top_k_history_result = get_top_k_similar(query,namespace,k=3)
+    history = top_k_history_result.split("\n") if top_k_history_result else []
     return {"history_docs": history, "messages": state["messages"]}
 
     # test the function
@@ -303,6 +386,8 @@ llm = ChatGroq(
 
 
 def chatbot(state: State):
+
+    
     
 
     context = " ".join(state["context_docs"]).join(state["history_docs"])
@@ -473,21 +558,6 @@ graph = builder.compile()
 
 
 
-
-# def get_response(business_name, query, rag_data, system_prompt):
-#     config = {"configurable": {"thread_id": "2"}}
-#     # use query as input for the graph
-#     response = graph.invoke(
-#         {
-#             "business_name": business_name,
-#             "query": query,
-#             "rag_data": rag_data,
-#             "system_prompt": system_prompt,
-#         },
-#         config=config,
-#         stream_mode="values",
-#     )
-#     return response
 
 
 def generate_output(business_name,query):
