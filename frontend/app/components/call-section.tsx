@@ -8,9 +8,6 @@ import { Phone } from "lucide-react"
 
 import React from "react"
 import { useState } from "react"
-import { redirect } from "next/navigation"
-import { SubmitHandler } from "@/app/components/submit-handler"
-
 
 interface CallSectionProps {
     businessName: string,

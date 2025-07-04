@@ -2,14 +2,14 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
+    
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
 
 
-import { Button } from "@/components/ui/button"
-import { Bot, Icon, MessageSquare, Phone } from "lucide-react"
+
+import { Bot, MessageSquare, Phone } from "lucide-react"
 
 export function CardSection() {
     return (

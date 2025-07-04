@@ -1,9 +1,6 @@
 
 import React from 'react'
 import { SubmitHandler } from "@/app/components/submit-handler"
-import { Button } from '@/components/ui/button'
-import { WineOff } from 'lucide-react'
-import {redirect } from 'next/navigation'
 
 
 const page = () => {

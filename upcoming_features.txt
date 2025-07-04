@@ -1,0 +1,32 @@
+1) Analyze feedback or customer reactions using  sentiment analysis. 
+
+i.e we take the customer (human ) and bot voice interaction text then apply sentiment analysis on customer and decide the feedback review for further future advertisement
+
+
+
+2) Add a options in portal for product or services of business via whatsapp the details of product to the list of the numbers 
+
+
+
+
+3) Call performance dashboard where we show metrics of no of calls made, total minutes of talk, call pickup ratio (means no of call not picked up)
+
+
+
+4) Scheduling Calendar feature i.e in portal there is section where we select particular weekday i.e mon to fri and proper time so at this time call initate
+
+
+
+
+5) CRM integration with hubspot so we see no of bussiness use our product 
+
+
+6) audio selection option for the call (There are list of amazon polly audio we can provide from twilio)
+
+
+7) our portal bot (simple rag based bot which describe about our product means how to use it for laymen user)
+
+
+
+8) add real time listening features by web socket means we can interupt ai bot during call (hard feature)
+

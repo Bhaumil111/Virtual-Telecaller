@@ -30,13 +30,13 @@ async function getData() {
 
 
 
-export default function callDetails() {
+export default function CallDetails() {
 
 
   // const data = await getData()
 
   const [data,setData] = useState([])
-  const [loading, setLoading] = useState(true)
+  
   
 
   useEffect(()=>{

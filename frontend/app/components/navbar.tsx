@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react'
-import { Phone } from "lucide-react"
+
 import Link from 'next/link'
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
