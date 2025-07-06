@@ -125,35 +125,7 @@ def route(state: State):
 
     router = route_prompt | llm
 
-    # print("Router : ", router)
-
     query = state["messages"][-1].content
-    # namespace = state["business_name"].replace(" ","").lower()
-
-
-    # loader = TextLoader("data/rag_data.txt",encoding="utf-8")
-    # data = loader.load()
-
-    # text = ""
-
-
-    # for doc in data:
-    #     text+= doc.page_content + "\n\n"
-
-    # text_splitter= RecursiveCharacterTextSplitter(
-    #         chunk_size=1000,
-    #         chunk_overlap=20,
-    #         length_function=len,
-    #         is_separator_regex=False,
-    #         separators=["\n\n", "\n", " ", ".",","]
-    #     )
-
-
-    # data_chunks = text_splitter.split_text(text)
-
-    # upload_chunks_to_pinecone(data_chunks, namespace)
-    # print("Data uploaded to Pinecone for namespace:", namespace)
-
 
     source = router.invoke({"query": query})
     if source.datasource.lower() == "vectorstore":
@@ -175,6 +147,8 @@ def retrieve_docs(state: State):
     namespace = state["business_name"].replace(" ","").lower()
     top_k_result = get_top_k_similar(query, namespace, k=3)
     context = top_k_result.split("\n") if top_k_result else []
+
+    # print("fetching RAG context from Pinecone for namespace:", namespace)
 
 
     return {"context_docs": context, "messages": state["messages"]}
@@ -212,9 +186,6 @@ def history_retriver(state: State):
     bussiness_name = state["business_name"]
     namespace = "history_"+ bussiness_name.replace(" ", "").lower()
 
-    # embeddings = HuggingFaceEmbeddings(
-    #     model_name="sentence-transformers/all-mpnet-base-v2"
-    # )
     print("Reached History")
 
     query = state["messages"][-1].content
@@ -222,18 +193,7 @@ def history_retriver(state: State):
     llm = ChatGroq(
         groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.3-70b-versatile"
     )
-    # Load existing history
-    try:
-
-        with open(
-            "data/history.txt", "r", encoding="utf-8", errors="ignore"
-        ) as f:
-            history_data = f.read()
-            f.close()  # close the file after reading
-
-    except FileNotFoundError:
-        history_data = ""
-
+    history_data = ""
     # Add the latest message to the history
 
     for message in state["messages"]:
@@ -243,39 +203,29 @@ def history_retriver(state: State):
         else:
             history_data += f"AI_Bot :{message.content.strip()}\n"
 
-    system_prompt = """
-        You are an AI summarizer responsible for extracting and summarizing the most relevant topics from user and AI conversations. Your goal is to maintain a concise record of key discussion points based on frequency and importance.
-        ## History_Docs:  
-        This section contains a structured summary of past conversations. It is meant **only for reference** and should not be used unless relevant to the current discussion.
-        ### Summarization Guidelines:
-        - Prioritize recent and critical points first.
-        - Summarize in a clear, pointwise format.
-        - Keep it concise—only capture key information, avoiding unnecessary details.
-        ### Output Format:
-        
-        History_Docs: A structured, pointwise summary of key discussion topics.  .
+    system_prompt = f"""
+    You are a smart summarization assistant. Read the full conversation between the User and AI_Bot, and generate a concise yet complete summary.
+
+    Include:
+    - The User's key questions or problems.
+    - The AI_Bot's main responses, advice, or explanations.
+    - Any important technical or informational content.
+
+    Avoid repetition—summarize repeated topics only once. Exclude timestamps or speaker labels. Output a clear, paragraph-style summary that captures all unique points discussed. Given the conversation below:
+
+    {history_data}
     """
 
-    history_text = system_prompt + history_data
+    response = llm.invoke(system_prompt)
 
-    response = llm.invoke(history_text)
 
-    # response = response.content.split("</think>")[-1]
+    fin_response = response.content
 
-    with open("data/history.txt", "w", encoding="utf-8", errors="ignore") as f:
-
-        f.write(response.content)
-        f.close()
-
-    loader = TextLoader("data/history.txt", encoding="utf-8")
-
-    data = loader.load()
     text = ""
-
-
-    for doc in data:
-        text+= doc.page_content + "\n\n"
-
+    for doc in fin_response.split("\n"):
+        if doc.strip():
+            text += doc.strip() + "\n\n"
+    
     text_splitter= RecursiveCharacterTextSplitter(
             chunk_size=1000,
             chunk_overlap=20,
@@ -288,9 +238,11 @@ def history_retriver(state: State):
     data_chunks = text_splitter.split_text(text)
 
     upload_chunks_to_pinecone(data_chunks, namespace)
+    # print("History data uploaded to Pinecone for namespace:", namespace)
 
 
     top_k_history_result = get_top_k_similar(query,namespace,k=3)
+    # print("Fetching history from Pinecone for namespace:", namespace)
     history = top_k_history_result.split("\n") if top_k_history_result else []
     return {"history_docs": history, "messages": state["messages"]}
 

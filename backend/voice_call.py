@@ -121,11 +121,7 @@ def information():
             os.fsync(f.fileno())  
             f.close()
 
-        with open("data/history.txt","w",encoding="utf-8",errors="ignore") as f:
-            f.write("This is History file for the calls made by the bot.")
-            f.flush()
-            os.fsync(f.fileno())
-            f.close()
+
 
 
 
