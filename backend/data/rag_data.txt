@@ -1,14 +1,29 @@
-Domino’s Pizza is one of the world’s leading pizza delivery chains, with a strong presence in over 90 countries. Founded in 1960, Domino’s has grown into a household name, known for its consistent quality, quick service, and tech-enabled delivery experience. In India, Domino’s is operated by Jubilant FoodWorks and has become the go-to pizza brand for millions of customers, offering value-for-money meals, fast delivery, and an expanding range of products beyond just pizza.
+TechNimbus Solutions is a cutting-edge SaaS-based IT company specializing in cloud-native CRM and workflow automation tools for growing businesses. Founded in 2018, TechNimbus empowers startups, SMEs, and enterprises to streamline customer relationships, automate repetitive tasks, and unlock actionable insights from their operations using AI.
 
-At the heart of Domino’s success is its “30 minutes or free” delivery promise, a pioneering concept that redefined the food delivery industry. This customer-first mindset has been supported by Domino’s investment in digital technology, making it one of the most tech-forward food chains. Whether customers use the Domino’s mobile app, website, or call centers, they enjoy a seamless ordering process, real-time order tracking, and personalized deals based on their past orders.
+Our flagship product, NimbusFlow, is a no-code automation builder that integrates with over 150+ apps like Slack, Gmail, Notion, Salesforce, and more. It allows teams to create custom workflows that trigger actions based on events—without writing a single line of code.
 
-Domino’s offers a diverse and evolving menu that caters to a wide range of tastes. While pizza remains the star, the brand also serves sides like garlic breadsticks, pasta, chicken wings, choco lava cake, and beverages. In India, Domino’s has customized its offerings to cater to local preferences, with innovative creations like Paneer Makhani Pizza, Peppy Paneer, Chicken Keema Do Pyaza, and Cheese Burst Crust options. Vegetarian and non-vegetarian variants are both available, and the brand regularly launches limited-time items to keep the menu fresh.
+Another major product is NimbusCRM, a lightweight yet powerful customer relationship management platform tailored for sales teams. With smart lead scoring, AI-powered follow-up reminders, and real-time sales analytics dashboards, NimbusCRM ensures your sales pipeline is always flowing.
 
-A standout strength of Domino’s is its value-focused pricing and combo deals. Customers can order individual pizzas or choose from curated offers like the Everyday Value range, Buy 1 Get 1 offers, or family combos, all aimed at affordability for students, families, and working professionals. Domino’s also offers bulk ordering for office lunches and parties, making it a convenient choice for gatherings.
+We also offer NimbusSupport, a helpdesk tool powered by AI to streamline customer support queries, assign tickets smartly, and reduce first-response time using built-in chatbot workflows.
 
-Domino’s has also taken major strides in contactless delivery, digital payment integration, and safety protocols, especially post-pandemic. With features like Zero Contact Delivery, Domino’s Tracker, and in-app customer support, the brand maintains transparency and responsiveness in every step of the customer journey.
+Our SaaS suite is modular, enabling customers to choose the tools that best suit their team’s goals. All our products are hosted securely on AWS, GDPR-compliant, and offer flexible pricing tiers for startups, SMEs, and enterprise customers alike.
 
-From a brand voice perspective, Domino’s promotes a tone that is youthful, fun, fast, and customer-centric. Campaigns like "Yeh Hai Rishton Ka Time" and "Khushiyon Ki Home Delivery" have helped Domino’s connect with Indian audiences emotionally, positioning itself as more than just food — but a comfort experience shared with friends and family.
+Key Features:
 
-With over 1,700+ stores in India, and an average delivery time of 20–25 minutes, Domino’s continues to lead the quick-service restaurant space through a blend of flavor, speed, affordability, and innovation. The company is also investing in cloud kitchens, AI-based demand forecasting, and sustainability initiatives to stay ahead in the digital era.
+AI-assisted task and deal predictions.
 
+Omni-channel integration (email, chat, voice).
+
+Real-time team collaboration features.
+
+Mobile-ready dashboards.
+
+In-built analytics and reporting.
+
+Drag-and-drop workflow automation.
+
+TechNimbus is trusted by over 25,000 businesses globally across industries like e-commerce, healthcare, edtech, and logistics. We believe in “Making IT Human”—ensuring that our software is intuitive, collaborative, and a joy to use.
+
+Whether you're a fast-growing startup or a scaling enterprise, TechNimbus is your partner in operational efficiency and customer engagement.
+
+For demos, queries, or integrations, visit www.technimbus.io or call our 24x7 support line.

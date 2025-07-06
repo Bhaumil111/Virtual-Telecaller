@@ -3,7 +3,7 @@ import edge_tts
 import nest_asyncio
 
 import io
-import pygame
+# import pygame
 import edge_tts
 import asyncio
 import nest_asyncio
@@ -26,37 +26,12 @@ from langgraph.checkpoint.memory import MemorySaver
 from pinecone import Pinecone
 import uuid
 
+from helper_functions.pinecone_helper import upload_chunks_to_pinecone, get_top_k_similar
 
 load_dotenv()
 os.environ["GROQ_Key"] = os.getenv("GROQ_API_KEY")
 
-os.environ["PINECONE_API"] = os.getenv("PINECONE_API")
-os.environ["PINECONE_ENV"] = os.getenv("PINECONE_ENV")
-os.environ["PINECONE_HOST"] = os.getenv("PINECONE_HOST")
 
-
-pc = Pinecone(api_key=os.environ["PINECONE_API"])
-
-index = pc.Index(
-    host=os.environ["PINECONE_HOST"],
-)
-
-# print(f"Connected to Pinecone index: {index}")
-
-pygame.mixer.init()
-nest_asyncio.apply()
-MAX_CONCURRENT_TTS = 3
-semaphore = asyncio.Semaphore(MAX_CONCURRENT_TTS)
-memory = MemorySaver()
-
-
-# if not os.path.exists("data/rag_data.txt"):
-#     with open("data/rag_data.txt", "w", encoding="utf-8", errors="ignore") as f:
-#         f.write("This is random text for initialization.")
-#         f.close() # close the file after writing
-# if not os.path.exists("data/system_prompt.txt"):
-#     with open("data/system_prompt.txt", "w", encoding="utf-8", errors="ignore") as f:
-#         f.write("This is random text for initialization.")
 
 business_data = ""
 with open("data/rag_data.txt", "r", encoding="utf-8", errors="ignore") as f:
@@ -90,44 +65,6 @@ class RouteQuery(BaseModel):
     )
 
 
-def upload_chunks_to_pinecone(chunks , namespace):
-    records = []
-    for i, chunk in enumerate(chunks):
-        records.append(
-            {
-                "_id": str(uuid.uuid4()),
-                "text": chunk,  # <--- Use "text" instead of "chunk_text"
-                "chunk_index": i,  # optional metadata field
-            }
-        )
-
-    index.upsert_records(namespace =namespace,
-                         records=records)
-    # print(f"Uploaded {len(records)} records to Pinecone ')")
-
-
-def get_top_k_similar(query: str, session_id: str, k: int = 3):
-    """
-    This function retrieves the top k similar documents from the vector database based on the query.
-    """
-
-    results = index.search(
-        namespace=session_id,
-        query={"inputs": {"text": query}, "top_k": k},
-        fields=["text"],
-    )
-
-    hits = results.get("result", {}).get("hits", [])
-
-    text = ""
-    unique_texts = set()
-    for hit in hits:
-        content = hit.get("fields", {}).get("text", "").strip()
-        if content and content not in unique_texts:
-            text += content + "\n"
-            unique_texts.add(content)
-
-    return text
 
 
 
@@ -191,31 +128,31 @@ def route(state: State):
     # print("Router : ", router)
 
     query = state["messages"][-1].content
-    namespace = state["business_name"].replace(" ","").lower()
+    # namespace = state["business_name"].replace(" ","").lower()
 
 
-    loader = TextLoader("data/rag_data.txt",encoding="utf-8")
-    data = loader.load()
+    # loader = TextLoader("data/rag_data.txt",encoding="utf-8")
+    # data = loader.load()
 
-    text = ""
-
-
-    for doc in data:
-        text+= doc.page_content + "\n\n"
-
-    text_splitter= RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=20,
-            length_function=len,
-            is_separator_regex=False,
-            separators=["\n\n", "\n", " ", ".",","]
-        )
+    # text = ""
 
 
-    data_chunks = text_splitter.split_text(text)
+    # for doc in data:
+    #     text+= doc.page_content + "\n\n"
 
-    upload_chunks_to_pinecone(data_chunks, namespace)
-    print("Data uploaded to Pinecone for namespace:", namespace)
+    # text_splitter= RecursiveCharacterTextSplitter(
+    #         chunk_size=1000,
+    #         chunk_overlap=20,
+    #         length_function=len,
+    #         is_separator_regex=False,
+    #         separators=["\n\n", "\n", " ", ".",","]
+    #     )
+
+
+    # data_chunks = text_splitter.split_text(text)
+
+    # upload_chunks_to_pinecone(data_chunks, namespace)
+    # print("Data uploaded to Pinecone for namespace:", namespace)
 
 
     source = router.invoke({"query": query})
@@ -352,25 +289,7 @@ def history_retriver(state: State):
 
     upload_chunks_to_pinecone(data_chunks, namespace)
 
-    # text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    # docs = text_splitter.split_documents(data)
 
-    # vector_store1 = FAISS.from_documents(docs, embedding=embeddings)
-
-    # vector_store1.save_local("backend/vectorstore/history_db")
-
-    # vector_store = FAISS.load_local(
-    #     "backend/vectorstore/history_db",
-    #     embeddings=embeddings,
-    #     allow_dangerous_deserialization=True,
-    # )
-
-    # create retriever according to the user query
-    # retriever = vector_store.as_retriever(search_kwargs={"k": 2})
-
-    # result = retriever.invoke(query)
-
-    # history = [doc.page_content for doc in result]
     top_k_history_result = get_top_k_similar(query,namespace,k=3)
     history = top_k_history_result.split("\n") if top_k_history_result else []
     return {"history_docs": history, "messages": state["messages"]}
@@ -428,105 +347,13 @@ def speech_to_text(state: State):
 import os
 
 
-def text_to_speech(state):
-
-    pygame.mixer.init()
-
-    """
-    LangGraph Node: Converts text to speech using Edge-TTS and plays it in real time.
-    
-    Args:
-        state (dict): LangGraph state containing 'response' text.
-    
-    Returns:
-        dict: The same state dictionary (to maintain LangGraph flow).
-    """
-    text = state["response"]
-    chunks = text.split(". ")  # Split text into sentences
-
-    if not os.path.exists("audiochunks"):
-        os.makedirs("audiochunks")
-
-    async def generate_audio(text, index, audio_queue):
-        """Generates speech from text using Edge-TTS and stores it in an async queue."""
-
-        async with semaphore:
-            tts = edge_tts.Communicate(text, voice="en-US-JennyNeural")
-            audio_stream = io.BytesIO()
-
-            async for chunk in tts.stream():
-                if chunk["type"] == "audio":
-                    audio_stream.write(chunk["data"])
-
-            filename = f"audiochunks/chunk_{index}.mp3"
-            with open(filename, "wb") as f:
-                f.write(audio_stream.getvalue())
-
-            await audio_queue.put((index, filename))
-
-    async def play_audio(total_chunks, audio_queue):
-        """Plays generated audio chunks strictly in the correct order using pygame.mixer and deletes files afterward."""
-        expected_index = 0
-        ready_chunks = (
-            {}
-        )  # Dictionary to store chunks until they can be played in order
-        played_files = []  # Track files to delete later
-
-        while expected_index < total_chunks:
-            index, filename = await audio_queue.get()
-
-            # Store chunk for ordered playback
-            ready_chunks[index] = filename
-
-            # Ensure playback happens in the correct order
-            while expected_index in ready_chunks:
-                filename = ready_chunks.pop(expected_index)
-                print(f"🔊 Playing chunk {expected_index}...")
-
-                pygame.mixer.music.load(filename)
-                pygame.mixer.music.play()
-
-                while pygame.mixer.music.get_busy():
-                    await asyncio.sleep(0.02)
-
-                played_files.append(filename)  # Track files for deletion
-                expected_index += 1  # Move to next chunk
-
-        # pygame.mixer.music.stop() # Stop playback after all chunks are played
-        pygame.mixer.quit()  # Clean up pygame resources
-        pygame.quit()
-
-        print("✅ All chunks played in the correct order. Deleting files...")
-
-        # Delete all played audio files
-        for file in played_files:
-
-            try:
-                os.remove(file)
-            except FileNotFoundError:
-                pass
-
-    async def process_chunks():
-        """Manages TTS generation and playback."""
-        audio_queue = asyncio.PriorityQueue()
-        tasks = [
-            generate_audio(chunk, idx, audio_queue) for idx, chunk in enumerate(chunks)
-        ]
-        await asyncio.gather(*tasks, play_audio(len(chunks), audio_queue))
-
-    # Run async function inside a sync wrapper
-    asyncio.run(process_chunks())
-
-    return {"response": state["response"], "messages": state["messages"]}
-
-
 builder = StateGraph(State)
 builder.add_node("stt", speech_to_text)
 builder.add_node("wiki_search", wiki_search)
 builder.add_node("RAG", retrieve_docs)
 builder.add_node("llm", llm_query)
 builder.add_node("chatbot", chatbot)
-builder.add_node("tts", text_to_speech)
+# builder.add_node("tts", text_to_speech)
 
 builder.add_node("history", history_retriver)
 
@@ -554,8 +381,6 @@ graph = builder.compile()
 
 
 # --------------------------------------------
-
-
 
 
 

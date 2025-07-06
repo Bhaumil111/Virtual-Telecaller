@@ -10,12 +10,17 @@ from fetch_call_details import fetch_call_logs
 
 from flask import jsonify
 import requests
+from helper_functions.pinecone_helper import upload_business_data_to_pinecone
 
 # Initialize the Flask app
 load_dotenv()
 app = Flask(__name__)
 CORS(app)
 userdata = {}
+
+
+
+
 
 
 def get_ngrok_url():
@@ -68,6 +73,11 @@ messages = [
     }
 ]
 
+
+
+        
+
+
 # Define the list of phone numbers to call
 
 
@@ -95,20 +105,35 @@ def information():
         destination_Number = data.get("destinationNumber")
         # first create empty file and then write to it
 
+
+    
         with open("data/rag_data.txt", "w", encoding="utf-8", errors="ignore") as f:
             f.write(business_data)
-
-            f.flush()  # Flush the buffer to ensure all data is written to the file
-            os.fsync(f.fileno())  # Ensure the data is written to disk
-            f.close()  #
+            f.flush()  
+            os.fsync(f.fileno())  
+            f.close()  
 
         with open(
             "data/system_prompt.txt", "w", encoding="utf-8", errors="ignore"
         ) as f:
             f.write(system_prompt)
-            f.flush()  # Flush the buffer to ensure all data is written to the file
-            os.fsync(f.fileno())  # Ensure the data is written to disk
+            f.flush()  
+            os.fsync(f.fileno())  
             f.close()
+
+        with open("data/history.txt","w",encoding="utf-8",errors="ignore") as f:
+            f.write("This is History file for the calls made by the bot.")
+            f.flush()
+            os.fsync(f.fileno())
+            f.close()
+
+
+
+
+
+        # Upload the business data to Pinecone 
+        upload_business_data_to_pinecone(business_name)
+          # Wait for the data to be uploaded
 
         if destination_Number:
 
