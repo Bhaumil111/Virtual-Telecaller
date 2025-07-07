@@ -20,3 +20,5 @@ faiss-cpu
 pinecone
 fitz
 pymupdf
+wikipedia
+pyaudio
