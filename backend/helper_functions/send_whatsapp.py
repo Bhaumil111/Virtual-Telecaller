@@ -25,7 +25,7 @@ def send_whatsapp_message(message):
 
             body=message,
             from_=f"whatsapp:{FROM_WHATSAPP_NUMBER}",  # Ensure this is a valid WhatsApp-enabled Twilio number
-            to= "whatsapp:+917041965783" # Ensure this is a valid WhatsApp number
+            to= f"whatsapp:{TO_PHONE_NUMBER}"  # Ensure this is a valid WhatsApp number
 
 
         )
