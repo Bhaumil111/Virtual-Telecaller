@@ -1,28 +1,29 @@
-CodeZen Labs is a rapidly growing SaaS company focused on delivering developer-centric productivity tools and cloud-native solutions for agile software teams. Headquartered in Bengaluru and founded in 2020, CodeZen aims to simplify DevOps, improve code collaboration, and accelerate software release cycles for teams of all sizes.
+TechNimbus Solutions is a cutting-edge SaaS-based IT company specializing in cloud-native CRM and workflow automation tools for growing businesses. Founded in 2018, TechNimbus empowers startups, SMEs, and enterprises to streamline customer relationships, automate repetitive tasks, and unlock actionable insights from their operations using AI.
 
-Our core product, ZenDeploy, is a continuous integration and deployment (CI/CD) platform that allows developers to build, test, and ship code faster than ever. With built-in Docker support, multi-cloud compatibility (AWS, Azure, GCP), and seamless Git integrations, ZenDeploy enables teams to automate deployments with ease.
+Our flagship product, NimbusFlow, is a no-code automation builder that integrates with over 150+ apps like Slack, Gmail, Notion, Salesforce, and more. It allows teams to create custom workflows that trigger actions based on events—without writing a single line of code.
 
-We also offer ZenTrack, an intelligent issue and sprint tracking tool designed for fast-moving product teams. It combines traditional Kanban boards with AI-based velocity prediction and burnout prevention alerts—ideal for remote and hybrid teams.
+Another major product is NimbusCRM, a lightweight yet powerful customer relationship management platform tailored for sales teams. With smart lead scoring, AI-powered follow-up reminders, and real-time sales analytics dashboards, NimbusCRM ensures your sales pipeline is always flowing.
 
-For real-time documentation, we provide ZenDoc, a collaborative markdown editor that syncs with your codebase and auto-generates API references, changelogs, and usage guides. Dev teams love how it bridges the gap between code and documentation, all in one place.
+We also offer NimbusSupport, a helpdesk tool powered by AI to streamline customer support queries, assign tickets smartly, and reduce first-response time using built-in chatbot workflows.
 
-Our SaaS offerings are built on a microservices architecture, optimized for high availability, and are fully scalable with enterprise-grade security. All tools are accessible through a unified dashboard and support role-based access controls (RBAC), SSO, and audit logs.
+Our SaaS suite is modular, enabling customers to choose the tools that best suit their team’s goals. All our products are hosted securely on AWS, GDPR-compliant, and offer flexible pricing tiers for startups, SMEs, and enterprise customers alike.
 
-Why Teams Choose CodeZen Labs:
+Key Features:
 
-Developer-first UI/UX.
+AI-assisted task and deal predictions.
 
-Integration with tools like GitHub, GitLab, Bitbucket, Jira, Slack.
+Omni-channel integration (email, chat, voice).
 
-Automated testing pipelines.
+Real-time team collaboration features.
 
-End-to-end DevOps observability.
+Mobile-ready dashboards.
 
-Affordable pricing for startups and scale-ups.
+In-built analytics and reporting.
 
-We proudly serve over 12,000 software teams globally, including clients in fintech, edtech, SaaS, and cybersecurity. Our mission is to "Bring Zen to DevOps" by removing friction from the development pipeline.
+Drag-and-drop workflow automation.
 
-Looking to simplify your software delivery process? Join the CodeZen community today.
+TechNimbus is trusted by over 25,000 businesses globally across industries like e-commerce, healthcare, edtech, and logistics. We believe in “Making IT Human”—ensuring that our software is intuitive, collaborative, and a joy to use.
 
-Learn more at www.codezenlabs.dev or reach out to our team at support@codezenlabs.dev.
+Whether you're a fast-growing startup or a scaling enterprise, TechNimbus is your partner in operational efficiency and customer engagement.
 
+For demos, queries, or integrations, visit www.technimbus.io or call our 24x7 support line.

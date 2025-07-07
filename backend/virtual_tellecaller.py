@@ -9,7 +9,7 @@ import asyncio
 import nest_asyncio
 import os
 from dotenv import load_dotenv
-import speech_recognition as sr
+# import speech_recognition as sr
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
@@ -283,8 +283,8 @@ def chatbot(state: State):
     }
 
 
-recognizer = sr.Recognizer()
-mic = sr.Microphone()
+# recognizer = sr.Recognizer()
+# mic = sr.Microphone()
 
 
 def speech_to_text(state: State):
