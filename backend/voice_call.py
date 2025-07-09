@@ -11,6 +11,7 @@ from fetch_call_details import fetch_call_logs
 from flask import jsonify
 import requests
 from helper_functions.pinecone_helper import upload_business_data_to_pinecone
+from helper_functions.mongodata import save_call_conversation
 
 # Initialize the Flask app
 load_dotenv()
@@ -18,8 +19,10 @@ app = Flask(__name__)
 CORS(app)
 userdata = {}
 
-
-
+global call_text  # Global variable to store the call conversation text
+global curr_sid  # Global variable to store the current call SID
+call_text = ""  # Initialize call_text to an empty string
+curr_sid = None  # Initialize curr_sid to None
 
 
 
@@ -154,6 +157,8 @@ def information():
 
 @app.route("/voice", methods=["POST"])
 def voice():
+    global call_text
+
 
     response = VoiceResponse()
     response.pause(length=2)
@@ -175,6 +180,9 @@ def voice():
     intro = intro.content
 
     print("intro ", intro)
+    
+    call_text+= f"AI Bot:{intro}\n\n"
+
     """Handles incoming voice calls from Twilio."""
 
     response.say(
@@ -202,6 +210,7 @@ def voice():
 
 @app.route("/process_voice", methods=["POST"])
 def process_voice():
+    global call_text
     business_name = userdata.get("businessName")
     response = VoiceResponse()
     response.pause(length=2)
@@ -229,8 +238,12 @@ def process_voice():
         return Response(str(response), content_type="text/xml")
 
     print(f"User said: {speech_text}")
+    call_text += f"User:{speech_text}\n\n"
+
+
 
     if any(word in speech_text.lower() for word in exit_words):
+        call_text += "AI Bot: Thank you for having a conversation with me.\n\n"
         response.say(
             "Thank you for having a conversation with me.",
             language="en-US",
@@ -263,6 +276,7 @@ def process_voice():
 
     res = ai_response["response"]
     print(f"AI Response: {res}")
+    call_text += f"AI Bot:{res}\n\n"
     response.pause(length=5)
 
     response.say(res, language="en-US", voice="Polly.Matthew")
@@ -285,6 +299,8 @@ def process_voice():
 
 @app.route("/make_call", methods=["POST", "GET"])
 def make_call():
+    
+
 
     host = f"{ngrok_url}/voice"
 
@@ -306,6 +322,8 @@ def make_call():
         )
 
         print(f"Call initiated: {call.sid}")
+        global curr_sid
+        curr_sid = call.sid  # Store the current call SID globally
 
         return "Call initiated successfully."
 
@@ -317,11 +335,18 @@ def make_call():
 @app.route("/call_status", methods=["POST"])
 def call_status():
 
+    global call_text
+    global curr_sid
+
     call_queue.pop(0)  # Remove the first number from the queue as the call is complete
+    save_call_conversation(curr_sid, call_text)
+    call_text = ""  # Reset call_text for the next call
 
     print("Call Complete checking next call in queue")
 
     if call_queue:
+
+       
 
         # clearing the content of the history file
         with open("data/history.txt", "w", encoding="utf-8", errors="ignore") as f:
@@ -331,6 +356,13 @@ def call_status():
             f.close()
 
         next_number = call_queue.pop(0)
+
+
+        # custom function which save call conversation mapped to the current call SID
+       
+
+
+
 
         client.calls.create(
             url=f"{ngrok_url}/voice",
@@ -360,4 +392,6 @@ def call_logs():
 
 
 if __name__ == "__main__":
+
+
     app.run(port=5000, debug=False, use_reloader=False)

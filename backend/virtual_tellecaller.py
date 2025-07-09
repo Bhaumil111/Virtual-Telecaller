@@ -53,8 +53,6 @@ class State(TypedDict):
     path: str  # the path to the current state
     history_docs: List[str]  # the history documents
     query: str  # the query from the user
-    # system_prompt: str  # the system prompt for the chatbot
-    # rag_data: str  # the data used for RAG
     business_name: str  # the name of the business
 
 
@@ -145,10 +143,13 @@ def retrieve_docs(state: State):
 
     query = state["messages"][-1].content
     namespace = state["business_name"].replace(" ","").lower()
+    
     top_k_result = get_top_k_similar(query, namespace, k=3)
     context = top_k_result.split("\n") if top_k_result else []
 
-    # print("fetching RAG context from Pinecone for namespace:", namespace)
+    print("fetching RAG context from Pinecone for namespace:", namespace)
+    print("Context : ", context)
+    print("\n\n")
 
 
     return {"context_docs": context, "messages": state["messages"]}
@@ -165,6 +166,7 @@ def wiki_search(state: State):
 
 
 def llm_query(state: State):
+    print("Reached LLM Query")
     business_name = state["business_name"]
     messages = [
         SystemMessage(
@@ -174,6 +176,13 @@ def llm_query(state: State):
     ]
 
     response = llm.invoke(messages)
+
+
+    print("Testing LLM Response : ", response.content )
+    print("\n\n")
+
+
+
 
     # Extract content from the response
     response_text = response.content.split("</think>")[-1]
@@ -208,7 +217,7 @@ def history_retriver(state: State):
 
     Include:
     - The User's key questions or problems.
-    - The AI_Bot's main responses, advice, or explanations.
+    - The AI_Bot's main responses, solutions, or suggestions.
     - Any important technical or informational content.
 
     Avoid repetition—summarize repeated topics only once. Exclude timestamps or speaker labels. Output a clear, paragraph-style summary that captures all unique points discussed. Given the conversation below:
@@ -241,8 +250,10 @@ def history_retriver(state: State):
     # print("History data uploaded to Pinecone for namespace:", namespace)
 
 
-    top_k_history_result = get_top_k_similar(query,namespace,k=3)
-    # print("Fetching history from Pinecone for namespace:", namespace)
+    top_k_history_result = get_top_k_similar(query,namespace,k=1)
+    print("Fetching history from Pinecone for namespace:", namespace)
+    print("Top K History Result : ", top_k_history_result)
+    print("\n\n")
     history = top_k_history_result.split("\n") if top_k_history_result else []
     return {"history_docs": history, "messages": state["messages"]}
 
@@ -265,6 +276,10 @@ def chatbot(state: State):
 
     full_system_prompt = system_prompt + " " + context
     
+
+
+    print("Testing Full System Prompt : ", full_system_prompt)
+    print("\n\n")
 
     messages = [
         SystemMessage(content=full_system_prompt),

@@ -27,3 +27,23 @@ def save_data_to_mongo(business_name, business_data, system_prompt, source_Numbe
 
 
 
+def save_call_conversation(call_sid,call_text):
+    try:
+        client = MongoClient("mongodb://localhost:27017/")
+        db = client["virtual_telecaller"]
+        collection = db["call_conversations"]
+        document = {
+            "call_sid":call_sid,
+            "call_text":call_text
+        }
+
+
+        collection.insert_one(document)
+        print("Call conversation saved to MongoDB successfully.")
+    except Exception as e:
+        print(f"Error saving call conversation to MongoDB:{e}")
+    finally:
+        client.close()
+
+
+

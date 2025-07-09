@@ -1,1 +1,61 @@
-Ask Tirth Gohil at what time we have to leave for college.
+PixelForge Arena is a cloud-native SaaS gaming company that blends competitive eSports with casual gaming in a unified digital ecosystem. Founded in 2022, PixelForge helps gamers worldwide experience fast, immersive gameplay with friends and global opponents—right from the browser, without downloads or high-end hardware.
+
+At the heart of PixelForge is ArenaCloud, a real-time cloud gaming platform offering a wide range of multiplayer titles built in-house and by partner studios. ArenaCloud lets players jump into high-speed matches, tournaments, and ranked ladders using just a stable internet connection and a basic device.
+
+One of our flagship games is CyberClash 2050, a fast-paced, team-based tactical shooter with dynamic maps, skill-based matchmaking, and customizable agents. Another popular title is Drift Dynasty, a physics-accurate racing game where players drift through cyberpunk-inspired cities, earn garage upgrades, and race in live events.
+
+Core Features of ArenaCloud:
+
+One-click game launch from browser or mobile
+
+Auto cloud save with cross-device sync
+
+Team voice chat and social lobbies
+
+Skill-based leaderboards and matchmaking
+
+Live tournaments with cash prizes and rewards
+
+Instant patching with no user updates required
+
+For developers, we offer ForgeKit, a modular SDK that lets studios publish their games to our cloud instantly. With integrated support for cloud saves, cross-platform matchmaking, ad placement, and crash monitoring, ForgeKit reduces backend overhead so creators can focus on gameplay.
+
+We also provide PixelAnalytics, a SaaS dashboard for developers and tournament organizers to monitor:
+
+Real-time player activity
+
+Session duration and drop-off
+
+In-game economy trends
+
+Ad performance and monetization
+
+Player Benefits:
+
+No installations, no storage limitations
+
+60 FPS gaming on mobile, even for mid-tier devices
+
+Free and premium game tiers with seasonal passes
+
+Personalized in-game avatars and progression badges
+
+Secure parental controls and play limits
+
+Developer Benefits:
+
+Fast deployment via ForgeKit
+
+Revenue sharing with transparent analytics
+
+Regional player engagement insights
+
+Easy integration of ads, passes, and merch stores
+
+PixelForge Arena currently supports over 100 concurrent games and has more than 500,000 registered players. Our users are primarily based in North America, Southeast Asia, and Europe. We’re expanding to LATAM and the Middle East in the coming months.
+
+We believe the future of gaming is hardware-free, social-first, and creator-powered. Whether you're a solo gamer, content creator, or game studio—PixelForge Arena has something for you.
+
+Join the arena. Forge your story.
+
+To play or build, visit www.pixelforgearena.com or email us at support@pixelforgearena.com.

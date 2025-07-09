@@ -35,7 +35,8 @@ def upload_chunks_to_pinecone(chunks , namespace):
 
     index.upsert_records(namespace =namespace,
                          records=records)
-    # print(f"Uploaded {len(records)} records to Pinecone ')")
+    
+    print("Data uploaded to Pinecone for namespace:", namespace)
 
 
 def get_top_k_similar(query: str, session_id: str, k: int = 3):
@@ -89,5 +90,5 @@ def upload_business_data_to_pinecone(business_name:str):
     data_chunks = text_splitter.split_text(text)
 
     upload_chunks_to_pinecone(data_chunks, namespace)
-    print("Data uploaded to Pinecone for namespace:", namespace)
+
     
