@@ -33,17 +33,25 @@ os.environ["GROQ_Key"] = os.getenv("GROQ_API_KEY")
 
 
 
-business_data = ""
-with open("data/rag_data.txt", "r", encoding="utf-8", errors="ignore") as f:
-    business_data = f.read()
-    f.close() # close the file after reading
+# business_data = ""
+# with open("data/rag_data.txt", "r", encoding="utf-8", errors="ignore") as f:
+#     business_data = f.read()
+#     f.close() # close the file after reading
 
 
-system_prompt = ""
+# system_prompt = ""
 
-with open("data/system_prompt.txt", "r", encoding="utf-8", errors="ignore") as f:
-    system_prompt = f.read()
-    f.close() # close the file after reading
+# with open("data/system_prompt.txt", "r", encoding="utf-8", errors="ignore") as f:
+#     system_prompt = f.read()
+#     f.close() # close the file after reading
+
+def get_business_data():
+    with open("data/rag_data.txt", "r", encoding="utf-8", errors="ignore") as f:
+        return f.read()
+
+def get_system_prompt():
+    with open("data/system_prompt.txt", "r", encoding="utf-8", errors="ignore") as f:
+        return f.read()
 
 
 class State(TypedDict):
@@ -68,8 +76,14 @@ class RouteQuery(BaseModel):
 
 def route(state: State):
 
+    # print("Reached Route")
+
     business_name = state["business_name"]
+
+
     # business_data = state["rag_data"]
+
+    business_data = get_business_data()
 
     llm = ChatGroq(
         groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.3-70b-versatile"
@@ -147,9 +161,9 @@ def retrieve_docs(state: State):
     top_k_result = get_top_k_similar(query, namespace, k=3)
     context = top_k_result.split("\n") if top_k_result else []
 
-    print("fetching RAG context from Pinecone for namespace:", namespace)
-    print("Context : ", context)
-    print("\n\n")
+    # print("fetching RAG context from Pinecone for namespace:", namespace)
+    # print("Context : ", context)
+    # print("\n\n")
 
 
     return {"context_docs": context, "messages": state["messages"]}
@@ -178,8 +192,8 @@ def llm_query(state: State):
     response = llm.invoke(messages)
 
 
-    print("Testing LLM Response : ", response.content )
-    print("\n\n")
+    # print("Testing LLM Response : ", response.content )
+    # print("\n\n")
 
 
 
@@ -251,9 +265,9 @@ def history_retriver(state: State):
 
 
     top_k_history_result = get_top_k_similar(query,namespace,k=1)
-    print("Fetching history from Pinecone for namespace:", namespace)
-    print("Top K History Result : ", top_k_history_result)
-    print("\n\n")
+    # print("Fetching history from Pinecone for namespace:", namespace)
+    # print("Top K History Result : ", top_k_history_result)
+    # print("\n\n")
     history = top_k_history_result.split("\n") if top_k_history_result else []
     return {"history_docs": history, "messages": state["messages"]}
 
@@ -269,6 +283,9 @@ llm = ChatGroq(
 
 def chatbot(state: State):
 
+    print("Reached Chatbot")
+    system_prompt = get_system_prompt()
+
     
     
 
@@ -278,7 +295,7 @@ def chatbot(state: State):
     
 
 
-    print("Testing Full System Prompt : ", full_system_prompt)
+    print("Full System Prompt : ", full_system_prompt)
     print("\n\n")
 
     messages = [

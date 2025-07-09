@@ -1,61 +1,29 @@
-PixelForge Arena is a cloud-native SaaS gaming company that blends competitive eSports with casual gaming in a unified digital ecosystem. Founded in 2022, PixelForge helps gamers worldwide experience fast, immersive gameplay with friends and global opponents—right from the browser, without downloads or high-end hardware.
+TechNimbus Solutions is a cutting-edge SaaS-based IT company specializing in cloud-native CRM and workflow automation tools for growing businesses. Founded in 2018, TechNimbus empowers startups, SMEs, and enterprises to streamline customer relationships, automate repetitive tasks, and unlock actionable insights from their operations using AI.
 
-At the heart of PixelForge is ArenaCloud, a real-time cloud gaming platform offering a wide range of multiplayer titles built in-house and by partner studios. ArenaCloud lets players jump into high-speed matches, tournaments, and ranked ladders using just a stable internet connection and a basic device.
+Our flagship product, NimbusFlow, is a no-code automation builder that integrates with over 150+ apps like Slack, Gmail, Notion, Salesforce, and more. It allows teams to create custom workflows that trigger actions based on events—without writing a single line of code.
 
-One of our flagship games is CyberClash 2050, a fast-paced, team-based tactical shooter with dynamic maps, skill-based matchmaking, and customizable agents. Another popular title is Drift Dynasty, a physics-accurate racing game where players drift through cyberpunk-inspired cities, earn garage upgrades, and race in live events.
+Another major product is NimbusCRM, a lightweight yet powerful customer relationship management platform tailored for sales teams. With smart lead scoring, AI-powered follow-up reminders, and real-time sales analytics dashboards, NimbusCRM ensures your sales pipeline is always flowing.
 
-Core Features of ArenaCloud:
+We also offer NimbusSupport, a helpdesk tool powered by AI to streamline customer support queries, assign tickets smartly, and reduce first-response time using built-in chatbot workflows.
 
-One-click game launch from browser or mobile
+Our SaaS suite is modular, enabling customers to choose the tools that best suit their team’s goals. All our products are hosted securely on AWS, GDPR-compliant, and offer flexible pricing tiers for startups, SMEs, and enterprise customers alike.
 
-Auto cloud save with cross-device sync
+Key Features:
 
-Team voice chat and social lobbies
+AI-assisted task and deal predictions.
 
-Skill-based leaderboards and matchmaking
+Omni-channel integration (email, chat, voice).
 
-Live tournaments with cash prizes and rewards
+Real-time team collaboration features.
 
-Instant patching with no user updates required
+Mobile-ready dashboards.
 
-For developers, we offer ForgeKit, a modular SDK that lets studios publish their games to our cloud instantly. With integrated support for cloud saves, cross-platform matchmaking, ad placement, and crash monitoring, ForgeKit reduces backend overhead so creators can focus on gameplay.
+In-built analytics and reporting.
 
-We also provide PixelAnalytics, a SaaS dashboard for developers and tournament organizers to monitor:
+Drag-and-drop workflow automation.
 
-Real-time player activity
+TechNimbus is trusted by over 25,000 businesses globally across industries like e-commerce, healthcare, edtech, and logistics. We believe in “Making IT Human”—ensuring that our software is intuitive, collaborative, and a joy to use.
 
-Session duration and drop-off
+Whether you're a fast-growing startup or a scaling enterprise, TechNimbus is your partner in operational efficiency and customer engagement.
 
-In-game economy trends
-
-Ad performance and monetization
-
-Player Benefits:
-
-No installations, no storage limitations
-
-60 FPS gaming on mobile, even for mid-tier devices
-
-Free and premium game tiers with seasonal passes
-
-Personalized in-game avatars and progression badges
-
-Secure parental controls and play limits
-
-Developer Benefits:
-
-Fast deployment via ForgeKit
-
-Revenue sharing with transparent analytics
-
-Regional player engagement insights
-
-Easy integration of ads, passes, and merch stores
-
-PixelForge Arena currently supports over 100 concurrent games and has more than 500,000 registered players. Our users are primarily based in North America, Southeast Asia, and Europe. We’re expanding to LATAM and the Middle East in the coming months.
-
-We believe the future of gaming is hardware-free, social-first, and creator-powered. Whether you're a solo gamer, content creator, or game studio—PixelForge Arena has something for you.
-
-Join the arena. Forge your story.
-
-To play or build, visit www.pixelforgearena.com or email us at support@pixelforgearena.com.
+For demos, queries, or integrations, visit www.technimbus.io or call our 24x7 support line.
