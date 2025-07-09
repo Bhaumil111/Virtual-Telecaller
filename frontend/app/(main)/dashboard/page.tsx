@@ -8,30 +8,6 @@ import Link from 'next/link';
 
 
 
-/* 
-call_sid
-: 
-"CA5be7be516cb12dc90bbf0cf2f77af4ca"
-duration
-: 
-"74"
-end_time
-: 
-"Wed, 09 Jul 2025 03:08:47 GMT"
-from
-: 
-"+12675782432"
-start_time
-: 
-"Wed, 09 Jul 2025 03:07:33 GMT"
-status
-: 
-"completed"
-to
-: 
-"+917041965783"
-*/
-
 
 type CallDetailsProps = {
   call_sid:string,
