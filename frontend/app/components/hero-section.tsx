@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 export function HeroSection(){
 const handleClick = () =>{
 
-    redirect("/makeCall")
+    redirect("/dashboard")
 
 }
 
@@ -18,9 +18,6 @@ const handleClick = () =>{
                     AI <span className="text-emerald-600 dark:text-emerald-300">Telecaller</span>
                         </h1>
                     <p className = "mt-4 text-2xl text-black dark:text-gray-300 "> The AI-powered virtual telecaller that advertises your business effectively</p>
-
-
-
 
 
                     <div className="mt-8 flex justify-center" onClick={handleClick}>

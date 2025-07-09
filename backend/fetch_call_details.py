@@ -21,14 +21,25 @@ calls_data = []
 
 for call in calls:
 
+    # print (f"Call SID: {call.sid}")
+    # print (f"From: {call._from}")
+    # print (f"To: {call.to}")
+    # print (f"Status: {call.status}")
+    # print (f"Start Time: {call.start_time}")
+    # print (f"End Time: {call.end_time}")
+    # print (f"Duration: {call.duration}")
+
+
+    
+
     calls_data.append({
-        "Call SID" : call.sid,
-        "From" :call._from,
-        "To":call.to,
-        "Status":call.status,
-        "Start Time":call.start_time,
-        "End Time":call.end_time,
-        "Duration":call.duration
+        "call_sid" : call.sid,
+        "from" :call._from,
+        "to":call.to,
+        "status":call.status,
+        "start_time":call.start_time,
+        "end_time":call.end_time,
+        "duration":call.duration
     })
 
 

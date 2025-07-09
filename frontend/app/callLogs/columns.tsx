@@ -28,13 +28,13 @@ import { ColumnDef } from "@tanstack/react-table"
 
 
 export type CallLog = {
-  "Call SID":string,
-  Duration:string,
-  "End Time":string,
-  From:string,
-  "Start Time":string,
-  Status:string,
-  To:string,
+  call_sid:string,
+  duration:string,
+  end_time:string,
+  from:string,
+  start_time:string,
+  status:string,
+  to:string
   
 }
 
@@ -49,7 +49,7 @@ export type CallLog = {
 export const columns:ColumnDef<CallLog>[]  =[
 // Call_sid
   {
-    accessorKey:"Call SID",
+    accessorKey:"call_sid",
     header:"Call SID",
   },
 
@@ -61,7 +61,7 @@ export const columns:ColumnDef<CallLog>[]  =[
 // To
 
   {
-    accessorKey:"To",
+    accessorKey:"to",
     header:"To",
   },
 
@@ -69,24 +69,24 @@ export const columns:ColumnDef<CallLog>[]  =[
 
   // Start Time
   {
-    accessorKey:"Start Time",
+    accessorKey:"start_time",
     header:"Start Time",
   },
   // End Time
   {
-    accessorKey:"End Time",
+    accessorKey:"end_time",
     header:"End Time",
   },
 
 
   // Duration
   {
-    accessorKey:"Duration",
+    accessorKey:"duration",
     header:"Duration",
   },
 
   {
-    accessorKey:"Status",
+    accessorKey:"status",
     header:"Status",
   },
 
