@@ -23,17 +23,20 @@ userdata = {}
 
 
 
-def get_ngrok_url():
-    try:
-        tunnels = requests.get("http://localhost:4040/api/tunnels").json()["tunnels"]
-        print(tunnels[0]["public_url"])
-        return tunnels[0]["public_url"]  # Corrected line
-    except Exception as e:
-        print(f"Error fetching ngrok URL: {e}")
-        return None
+# def get_ngrok_url():
+#     try:
+#         tunnels = requests.get("http://localhost:4040/api/tunnels").json()["tunnels"]
+#         print(tunnels[0]["public_url"])
+#         return tunnels[0]["public_url"]  # Corrected line
+#     except Exception as e:
+#         print(f"Error fetching ngrok URL: {e}")
+#         return None
 
 
-ngrok_url = get_ngrok_url()
+# ngrok_url = get_ngrok_url()
+
+hosted_url = os.getenv("HOSTED_URL")
+# print(f"Hosted URL: {hosted_url}")
 
 # ai_response = generate_output("", "")
 
@@ -286,7 +289,8 @@ def process_voice():
 @app.route("/make_call", methods=["POST", "GET"])
 def make_call():
 
-    host = f"{ngrok_url}/voice"
+    # host = f"{ngrok_url}/voice"
+    host = hosted_url + "/voice"
 
     """Initiate a call to the user's phone number."""
 
@@ -297,10 +301,10 @@ def make_call():
 
     try:
         call = client.calls.create(
-            url=f"{ngrok_url}/voice",
+            url=f"{hosted_url}/voice",
             from_=source_number,
             to=call_queue[0],
-            status_callback=f"{ngrok_url}/call_status",
+            status_callback=f"{hosted_url}/call_status",
             status_callback_event=["completed"],
             status_callback_method="POST",
         )
@@ -333,10 +337,10 @@ def call_status():
         next_number = call_queue.pop(0)
 
         client.calls.create(
-            url=f"{ngrok_url}/voice",
+            url=f"{hosted_url}/voice",
             to=next_number,
             from_=TWILIO_PHONE_NUMBER,
-            status_callback=f"{ngrok_url}/call_status",
+            status_callback=f"{hosted_url}/call_status",
             status_callback_event=["completed"],
             status_callback_method="POST",
         )
@@ -360,4 +364,8 @@ def call_logs():
 
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=False, use_reloader=False)
+
+    host= "0.0.0.0"
+    port = int(os.getenv("PORT",5000))
+    app.run( host=host, port=port,
+             debug=False, use_reloader=False)

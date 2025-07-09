@@ -1,13 +1,11 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenu,
-  SidebarGroupLabel,
   SidebarGroupContent,
 
 } from "@/components/ui/sidebar"
