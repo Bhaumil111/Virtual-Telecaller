@@ -15,23 +15,24 @@ import { Phone, LayoutDashboard, Users, History, BarChart3, Bot } from "lucide-r
 import Link from "next/link"
 
 
+
+
 export function AppSidebar() {
 
   const menuItems = [
 
-    { title: "Dashboard", url: "/", icon: LayoutDashboard },
+    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
     { title: "Users", url: "/users", icon: Users },
-    { title: "CallHistory", url: "/call_history", icon: History },
+    { title: "CallHistory", url: "/callLogs", icon: History },
     { title: "Analytics", url: "/analytics", icon: BarChart3 },
-
-    { title: "Call", url: "/call", icon: Phone },
+    { title: "Call", url: "/makeCall", icon: Phone },
+    // {title: "Live Call Chat", url: "/chat", icon: Bot}
 
   ]
   return (
-    <Sidebar>
+    <Sidebar className="w-64 h-full max-w-64 min-w-64">
       <SidebarContent>
         <SidebarGroup>
-          {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
 
 
           <SidebarHeader>
@@ -39,7 +40,6 @@ export function AppSidebar() {
             <div className="flex items-center justify-center h-16 w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 rounded-md ">
               <div className="flex items-center gap-2">
                 <Bot className="h-8 w-8 text-blue-600" />
-
                 <Link href="/">
 
                 <h1 className="text-xl font-bold text-gray-900 dark:text-gray-200">

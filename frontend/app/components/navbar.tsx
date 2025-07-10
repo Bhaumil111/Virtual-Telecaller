@@ -38,9 +38,10 @@ export function Navbar() {
 
                 <div className='flex items-center gap-4 '>
                     <ModeToggle  />
-                    <Link href="/" className='text-lg font-semibold hover:text-emerald-600 dark:hover:text-emerald-300'>Home</Link>
+                      <Link href="/" className='text-lg font-semibold hover:text-emerald-600   dark:hover:text-emerald-300 '>Home</Link>
+                    <Link href="/dashboard" className='text-lg font-semibold hover:text-emerald-600 dark:hover:text-emerald-300'>Dashboard</Link>
                     {/* <Link href="/about" className='text-lg font-semibold hover:text-emerald-600'>About</Link> */}
-                    <Link href="/callLogs" className='text-lg font-semibold hover:text-emerald-600   dark:hover:text-emerald-300 '>CallRecords</Link>
+                  
 
 
                     <SignedOut>

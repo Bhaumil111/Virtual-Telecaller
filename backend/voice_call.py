@@ -13,17 +13,20 @@ import requests
 from helper_functions.pinecone_helper import upload_business_data_to_pinecone
 from helper_functions.mongodata import save_call_conversation
 
+# from helper_functions.chat_render import send_text_to_frontend
+from flask_socketio import SocketIO, emit
+
 # Initialize the Flask app
 load_dotenv()
 app = Flask(__name__)
 CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 userdata = {}
 
 global call_text  # Global variable to store the call conversation text
 global curr_sid  # Global variable to store the current call SID
 call_text = ""  # Initialize call_text to an empty string
 curr_sid = None  # Initialize curr_sid to None
-
 
 
 def get_ngrok_url():
@@ -37,6 +40,11 @@ def get_ngrok_url():
 
 
 ngrok_url = get_ngrok_url()
+
+
+def send_text_to_frontend(label, text):
+    socketio.emit("chat_message", {"label": label, "text": text})
+
 
 # ai_response = generate_output("", "")
 
@@ -77,10 +85,6 @@ messages = [
 ]
 
 
-
-        
-
-
 # Define the list of phone numbers to call
 
 
@@ -108,31 +112,23 @@ def information():
         destination_Number = data.get("destinationNumber")
         # first create empty file and then write to it
 
-
-    
         with open("data/rag_data.txt", "w", encoding="utf-8", errors="ignore") as f:
             f.write(business_data)
-            f.flush()  
-            os.fsync(f.fileno())  
-            f.close()  
+            f.flush()
+            os.fsync(f.fileno())
+            f.close()
 
         with open(
             "data/system_prompt.txt", "w", encoding="utf-8", errors="ignore"
         ) as f:
             f.write(system_prompt)
-            f.flush()  
-            os.fsync(f.fileno())  
+            f.flush()
+            os.fsync(f.fileno())
             f.close()
 
-
-
-
-
-
-
-        # Upload the business data to Pinecone 
+        # Upload the business data to Pinecone
         upload_business_data_to_pinecone(business_name)
-          # Wait for the data to be uploaded
+        # Wait for the data to be uploaded
 
         if destination_Number:
 
@@ -159,7 +155,6 @@ def information():
 def voice():
     global call_text
 
-
     response = VoiceResponse()
     response.pause(length=2)
 
@@ -180,8 +175,11 @@ def voice():
     intro = intro.content
 
     print("intro ", intro)
-    
-    call_text+= f"AI Bot:{intro}\n\n"
+
+    # send_text_to_frontend("intro",intro)
+
+    call_text += f"AI Bot:{intro}\n\n"
+    send_text_to_frontend("AI Bot", intro)
 
     """Handles incoming voice calls from Twilio."""
 
@@ -238,11 +236,11 @@ def process_voice():
         return Response(str(response), content_type="text/xml")
 
     print(f"User said: {speech_text}")
+    send_text_to_frontend("user", speech_text)
     call_text += f"User:{speech_text}\n\n"
 
-
-
     if any(word in speech_text.lower() for word in exit_words):
+        send_text_to_frontend("AI Bot", "Thank you for having a conversation with me.")
         call_text += "AI Bot: Thank you for having a conversation with me.\n\n"
         response.say(
             "Thank you for having a conversation with me.",
@@ -260,7 +258,9 @@ def process_voice():
     )
 
     # Increase pause to allow maximum time for LLM response.
-    response.pause(length=3)  # Main processing time for LLM response.////////////////////////////////////////
+    response.pause(
+        length=3
+    )  # Main processing time for LLM response.////////////////////////////////////////
 
     # Now call your LLM (this is still blocking, so ensure the pause covers your processing time).
     ai_response = generate_output(business_name, speech_text)
@@ -276,6 +276,7 @@ def process_voice():
 
     res = ai_response["response"]
     print(f"AI Response: {res}")
+    send_text_to_frontend("AI Bot", res)
     call_text += f"AI Bot:{res}\n\n"
     response.pause(length=5)
 
@@ -299,8 +300,6 @@ def process_voice():
 
 @app.route("/make_call", methods=["POST", "GET"])
 def make_call():
-    
-
 
     host = f"{ngrok_url}/voice"
 
@@ -337,32 +336,22 @@ def call_status():
 
     global call_text
     global curr_sid
-
-    call_queue.pop(0)  # Remove the first number from the queue as the call is complete
+    if call_queue:
+        call_queue.pop(
+            0
+        )  # Remove the first number from the queue as the call is complete
     save_call_conversation(curr_sid, call_text)
+
     call_text = ""  # Reset call_text for the next call
 
     print("Call Complete checking next call in queue")
+    send_text_to_frontend("SYSTEM", "Call completed. Checking next call in queue.")
 
     if call_queue:
 
-       
-
-        # clearing the content of the history file
-        with open("data/history.txt", "w", encoding="utf-8", errors="ignore") as f:
-            f.write("This is the call history file.")
-            f.flush()
-            os.fsync(f.fileno())
-            f.close()
-
         next_number = call_queue.pop(0)
 
-
         # custom function which save call conversation mapped to the current call SID
-       
-
-
-
 
         client.calls.create(
             url=f"{ngrok_url}/voice",
@@ -375,6 +364,15 @@ def call_status():
         print(f"Next call initiated to: {next_number}")
     else:
         print("No more numbers in the queue.")
+
+        send_text_to_frontend(
+            "SYSTEM", "All calls completed. Thank you for using Virtual Telecaller."
+        )
+        # clear the socketio session
+        curr_sid = None
+        call_text = ""
+
+        call_queue.clear()
 
     return ("All calls completed", 200)
 
@@ -393,5 +391,7 @@ def call_logs():
 
 if __name__ == "__main__":
 
+    # Start the Flask app with SocketIO
+    socketio.run(app, port=5000, debug=False, use_reloader=False)
 
-    app.run(port=5000, debug=False, use_reloader=False)
+    # app.run(port=5000, debug=False, use_reloader=False)

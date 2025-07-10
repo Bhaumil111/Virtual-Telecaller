@@ -33,7 +33,6 @@ export function CallSection() {
 
 
 
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
 
@@ -44,11 +43,19 @@ export function CallSection() {
     }
 
 
+
+
+
+
+
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
         e.preventDefault()
         console.log("formData", formData)
 
         try {
+            
             const response = await fetch("http://127.0.0.1:5000/information", {
                 method: "POST",
                 headers: {
@@ -60,6 +67,7 @@ export function CallSection() {
             });
 
 
+
             if (!response.ok) {
                 throw new Error("Network response was not ok")
             }
@@ -68,6 +76,13 @@ export function CallSection() {
 
             const data = await response.json()
             console.log("Response data:", data)
+
+            
+
+
+
+
+
 
 
             setTimeout(async () => {
@@ -80,6 +95,14 @@ export function CallSection() {
 
                     const calld = await callResponse.text()
                     console.log("Call Response:", calld)
+
+
+
+                     window.location.href = "/chat"  // Redirect to the chat page after 5 seconds
+
+
+
+
 
                 }
                 catch (error) {
@@ -98,12 +121,12 @@ export function CallSection() {
 
     }
     return (
-        <div className="bg-white dark:bg-[#121212] py-16 mx-auto rounded-md shadow-md mt-16 w-full md:w-1/2 transition-colors duration-300 ease-in-out">
+        <div className="bg-white dark:bg-[#1b1b1b]  mx-auto rounded-md shadow-md mt-6 w-full md:w-1/2 transition-colors duration-300 ease-in-out">
 
             <div className="flex flex-col items-center justify-center mb-8">
-                <div className="flex items-center mb-4 gap-1">
+                <div className="flex items-center mb-4 gap-1 mt-4">
                     <Phone className="h-8 w-8 text-emerald-600" />
-                    <h2 className="text-4xl font-bold text-gray-800 dark:text-white">Call Section</h2>
+                    <h2 className="text-4xl font-bold  text-gray-800 dark:text-white">Call Section</h2>
                 </div>
 
                 <p className="text-emerald-600 text-xl font-bold text-center mb-10">
@@ -193,11 +216,21 @@ export function CallSection() {
                     {/* Submit Button */}
                     <div className="flex justify-center w-full">
                         <button
+                           
+
+
                             type="submit"
                             className="bg-emerald-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-emerald-700 w-36 transition-all duration-200 hover:cursor-pointer"
                         >
                             Initiate Calls
                         </button>
+
+
+                        
+
+
+
+
                     </div>
 
                 </form>

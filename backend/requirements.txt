@@ -21,3 +21,4 @@ pinecone
 fitz
 pymupdf
 wikipedia
+flask-socketio 

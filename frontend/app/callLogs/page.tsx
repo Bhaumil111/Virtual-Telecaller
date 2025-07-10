@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { useEffect } from 'react';
 import { DataTable } from './datatable';
 import { columns } from './columns';
+import Link from 'next/link';
 
 
 async function getData() {
@@ -72,14 +73,22 @@ console.log("Data", data)
                       text-black dark:text-gray-200 mx-auto p-10 w-full 
                       max-w-6xl ">
   
-        <h1 className="text-2xl font-bold text-center mb-4">Call Logs</h1>
+        <h1 className="text-2xl font-bold text-center mb-4">Call Records
+
+
+        </h1>
         <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-          Here are the details of your call
+          All your call records are displayed below.
         </p>
   
         <DataTable columns={columns} data={data} />
+               <button className='bg-green-500 text-white dark:bg-green-600 px-4 py-2 rounded-md  hover:bg-green-600 dark:hover:bg-green-700 transition-colors duration-300'>
+            <Link href = "/dashboard">Go to Dashboard</Link>
+        </button>
   
       </div>
+
+
     </div>
   );
   

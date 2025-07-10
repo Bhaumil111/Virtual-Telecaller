@@ -100,7 +100,7 @@ const DashboardPage = () => {
 
         return{
           name: "From Telecaller",
-          number: item.from,
+          number: item.to,
           status: item.status,
           duration: formattedDuration,
           time: timeString,
@@ -173,7 +173,7 @@ const DashboardPage = () => {
 
   return (
 
-    <div className='p-6 space-y-6'>
+    <div className='p-6 space-y-6 min-h-screen max-w-7xl mx-auto'>
 
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold  text-gray-900 dark:text-white">Dashboard</h1>
@@ -263,15 +263,20 @@ const DashboardPage = () => {
             </Button>
             <Button className="w-full justify-start bg-transparent" variant="outline">
               <Users className="h-4 w-4 mr-2" />
+
+              <Link href = "/callLogs">
               View Call History
+              </Link>
             </Button>
-            <Button className="w-full justify-start bg-transparent" variant="outline">
+            {/* <Button className="w-full justify-start bg-transparent" variant="outline">
               <Calendar className="h-4 w-4 mr-2" />
               Schedule Calls
-            </Button>
+            </Button> */}
             <Button className="w-full justify-start bg-transparent" variant="outline">
               <TrendingUp className="h-4 w-4 mr-2" />
+              <Link href = "/analytics">
               View Analytics
+              </Link>
             </Button>
           </CardContent>
         </Card>

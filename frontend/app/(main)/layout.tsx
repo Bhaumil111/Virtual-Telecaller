@@ -1,20 +1,11 @@
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 import { AppSidebar } from  "@/app/components/app-sidebar";
 
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 
 export default function RootLayout({
@@ -23,15 +14,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <div className="flex min-h-screen min-w-full">
 
-
-    <SidebarProvider>
+     <SidebarProvider>
       <AppSidebar />
-      <main className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <main className="flex-1 p-4">
         <SidebarTrigger />
         {children}
       </main>
     </SidebarProvider>
+    </div>
 
   );
 }
