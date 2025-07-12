@@ -1,6 +1,13 @@
 
 from pymongo import MongoClient
 import json
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+
+mongodb_uri = os.getenv("MONGODB_URI")
+
 def save_data_to_mongo(business_name, business_data, system_prompt, source_Number, destination_Number):
 
 
@@ -29,8 +36,8 @@ def save_data_to_mongo(business_name, business_data, system_prompt, source_Numbe
 
 def save_call_conversation(call_sid,call_text):
     try:
-        client = MongoClient("mongodb://localhost:27017/")
-        db = client["virtual_telecaller"]
+        client = MongoClient(mongodb_uri)
+        db = client["Virtual_tellecaller"]
         collection = db["call_conversations"]
         document = {
             "call_sid":call_sid,

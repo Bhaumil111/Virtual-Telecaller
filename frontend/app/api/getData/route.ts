@@ -18,8 +18,8 @@ export async function GET(){
             }
         });
     }
-    catch(error){
-        return new Response(JSON.stringify({error:"Failed to fetch data"}),{
+    catch{
+        return new Response(JSON.stringify({ error: "Failed to fetch data" }), {
             status:500,
             headers:{
                 "Content-Type":"application/json"

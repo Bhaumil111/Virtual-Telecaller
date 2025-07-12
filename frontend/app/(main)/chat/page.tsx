@@ -1,4 +1,5 @@
 "use client"
+import Link from 'next/link';
 import React from 'react'
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
@@ -11,10 +12,12 @@ const socket = io('http://localhost:5000');
 
 const ChatPage = () => {
 
+    type MessageProps = {
+        label: string,
+        text: string,
+    }
 
-
-
-    const [messages, setMessages] = useState<any[]>([]);
+    const [messages, setMessages] = useState<MessageProps[]>([]);
 
     useEffect(() => {
         socket.on("chat_message", (data) => {
@@ -51,7 +54,7 @@ const ChatPage = () => {
                                 <span className='text-gray-900 dark:text-gray-100 text-lg'>
                                     {msg.text}
                                 </span>
-                              
+
                             </div>
                         ))}
                     </div>
@@ -60,13 +63,13 @@ const ChatPage = () => {
 
                 <div className='flex items-center justify-center mt-4'>
 
-                        <button
+                    <button
                         className='bg-green-500 text-white dark:bg-green-700 px-4 py-2 rounded-md shadow-md hover:bg-green-600 dark:hover:bg-green:800 transistion-colors duration-200'>
 
-                            <a href='/dashboard' className='text-white dark:text-white font-semibold'>
+                        <Link href='/dashboard' className='text-white dark:text-white font-semibold'>
                             Go to Dashboard
-                            </a>
-                        </button>
+                        </Link>
+                    </button>
 
 
                 </div>

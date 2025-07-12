@@ -2,21 +2,7 @@ import dbConnect from "@/lib/mongodb";
 import Item from "@/models/Item";
 
 
-type AnalyticsSidProps = {
-    params: {
-        call_sid: String
-
-    }
-}
-
-// in fetch data i have call_sid and call_text as parameters
-
-
-type AnalyticsPageProps = {
-    call_sid: string;
-    call_text: string;
-}
-
+import Link from "next/link";
 
 type MessageProps = {
     label: string,
@@ -25,7 +11,9 @@ type MessageProps = {
 
 
 
-export default async function AnalyticsDetailPage({ params }: AnalyticsSidProps) {
+// export default async function AnalyticsDetailPage({ params }: AnalyticsSidProps) {
+export default async function AnalyticsDetailPage({params}:{params: Promise<{call_sid:string}>}){
+
     const { call_sid } = await params;
     await dbConnect();
     const data = await Item.find({ call_sid: call_sid }).lean();
@@ -34,7 +22,7 @@ export default async function AnalyticsDetailPage({ params }: AnalyticsSidProps)
     const callText = data[0]?.call_text;
     // console.log("Call Text:", callText);
     //now make a message array where you find ai_bot and user messages
-    const messages = callText.split('\n').map((line: any) => {
+    const messages = callText.split('\n').map((line: string) => {
         const [label, text] = line.split(':');
 
         if (label && text) {
@@ -64,7 +52,7 @@ export default async function AnalyticsDetailPage({ params }: AnalyticsSidProps)
 
 
                     <div className="p-6 rounded-2xl h-[70vh] w-full overflow-y-auto">
-                        {messages.map((msg: MessageProps, index:any) => (
+                        {messages.map((msg: MessageProps, index:number) => (
 
 
 
@@ -87,9 +75,10 @@ export default async function AnalyticsDetailPage({ params }: AnalyticsSidProps)
                         <button
                         className='bg-green-500 text-white dark:bg-green-700 px-4 py-2 rounded-md shadow-md hover:bg-green-600 dark:hover:bg-green:800 transistion-colors duration-200'>
 
-                            <a href='/analytics' className='text-white dark:text-white font-semibold'>
+                             <Link href='/analytics' className='text-white dark:text-white font-semibold'>
                             Go to Analytics
-                            </a>
+                            </Link> 
+                            
                         </button>
 
 

@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Phone, PhoneCall, Clock, TrendingUp, Users, CheckCircle, XCircle, Calendar, History } from "lucide-react";
+import { Phone, PhoneCall, Clock, TrendingUp, Users, CheckCircle, XCircle, History } from "lucide-react";
 import Link from 'next/link';
 
 
