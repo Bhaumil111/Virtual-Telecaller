@@ -19,7 +19,7 @@ from flask_socketio import SocketIO, emit
 # Initialize the Flask app
 load_dotenv()
 app = Flask(__name__)
-CORS(app)
+CORS(app ,origins= "*")  # Allow all origins for CORS
 socketio = SocketIO(app, cors_allowed_origins="*")
 userdata = {}
 
@@ -404,6 +404,6 @@ if __name__ == "__main__":
     # Start the Flask app with SocketIO
     host = "0.0.0.0"
     port = int(os.getenv("PORT", 5000))  # Use PORT from environment or default to 5000
-    socketio.run(app, host=host, port=port, debug=False, use_reloader=False, allow_unsafe_werkzeug=True)
+    socketio.run(app, host=host, port=port, debug=True, use_reloader=False, allow_unsafe_werkzeug=True)
 
     # app.run(port=5000, debug=False, use_reloader=False)
