@@ -107,6 +107,8 @@ def information():
     try:
         data = request.get_json(force=True)  # Get JSON data from the request
         # print(data)
+        print("DEBUG Received data:", data)
+
 
         business_name = data.get("businessName")
         business_data = data.get("businessInfo")

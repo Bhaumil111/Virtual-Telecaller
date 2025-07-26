@@ -29,8 +29,8 @@ type RecentCallProps = {
 }
 
 async function getData() {
-  const res = await fetch("http://127.0.0.1:5000/call_details", {
-  // const res = await fetch("https://virtual-telecaller.onrender.com/call_details", {
+  // const res = await fetch("http://127.0.0.1:5000/call_details", {
+  const res = await fetch("https://virtual-telecaller.onrender.com/call_details", {
 
     method: "GET",
     headers: {
@@ -246,12 +246,6 @@ const DashboardPage = () => {
                   </div>
                 </div>
               ))}
-
-
-
-
-
-
             </div>
           </CardContent>
         </Card>
@@ -291,18 +285,8 @@ const DashboardPage = () => {
 
         </div>
 
-
-
-
-
-
-
-
     </div>
   )
-
-
-
 
 
 }
