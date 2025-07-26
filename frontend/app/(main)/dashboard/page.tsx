@@ -129,6 +129,12 @@ const DashboardPage = () => {
     }
 
     fetchData();
+
+
+    const interval = setInterval(fetchData, 100000); // run every 10 sec
+
+    return () => clearInterval(interval);
+
   }, []);
 
   let totalCalls = 0;

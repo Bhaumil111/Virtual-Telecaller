@@ -29,17 +29,20 @@ call_text = ""  # Initialize call_text to an empty string
 curr_sid = None  # Initialize curr_sid to None
 
 
-def get_ngrok_url():
-    try:
-        tunnels = requests.get("http://localhost:4040/api/tunnels").json()["tunnels"]
-        print(tunnels[0]["public_url"])
-        return tunnels[0]["public_url"]  # Corrected line
-    except Exception as e:
-        print(f"Error fetching ngrok URL: {e}")
-        return None
+# def get_ngrok_url():
+#     try:
+#         tunnels = requests.get("http://localhost:4040/api/tunnels").json()["tunnels"]
+#         print(tunnels[0]["public_url"])
+#         return tunnels[0]["public_url"]  # Corrected line
+#     except Exception as e:
+#         print(f"Error fetching ngrok URL: {e}")
+#         return None
 
 
-ngrok_url = get_ngrok_url()
+# ngrok_url = get_ngrok_url()
+
+hosted_url_call = "https://virtual-telecaller.onrender.com/voice"
+hosted_url_call_status = "https://virtual-telecaller.onrender.com/voice/call_status"
 
 
 def send_text_to_frontend(label, text):
@@ -301,7 +304,8 @@ def process_voice():
 @app.route("/make_call", methods=["POST", "GET"])
 def make_call():
 
-    host = f"{ngrok_url}/voice"
+    # host = f"{ngrok_url}/voice"
+    
 
     """Initiate a call to the user's phone number."""
 
@@ -312,10 +316,12 @@ def make_call():
 
     try:
         call = client.calls.create(
-            url=f"{ngrok_url}/voice",
+            # url=f"{ngrok_url}/voice",
+            url=hosted_url_call,
             from_=source_number,
             to=call_queue[0],
-            status_callback=f"{ngrok_url}/call_status",
+            # status_callback=f"{ngrok_url}/call_status",
+            status_callback=hosted_url_call_status,
             status_callback_event=["completed"],
             status_callback_method="POST",
         )
@@ -354,10 +360,12 @@ def call_status():
         # custom function which save call conversation mapped to the current call SID
 
         client.calls.create(
-            url=f"{ngrok_url}/voice",
+            # url=f"{ngrok_url}/voice",
+            url=hosted_url_call,
             to=next_number,
             from_=TWILIO_PHONE_NUMBER,
-            status_callback=f"{ngrok_url}/call_status",
+            # status_callback=f"{ngrok_url}/call_status",
+            status_callback=hosted_url_call_status,
             status_callback_event=["completed"],
             status_callback_method="POST",
         )
@@ -392,6 +400,8 @@ def call_logs():
 if __name__ == "__main__":
 
     # Start the Flask app with SocketIO
-    socketio.run(app, port=5000, debug=False, use_reloader=False)
+    host = "0.0.0.0"
+    port = int(os.getenv("PORT", 5000))  # Use PORT from environment or default to 5000
+    socketio.run(app, host=host, port=port, debug=False, use_reloader=False)
 
     # app.run(port=5000, debug=False, use_reloader=False)
