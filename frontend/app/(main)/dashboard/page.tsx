@@ -132,7 +132,7 @@ const DashboardPage = () => {
     fetchData();
 
 
-    const interval = setInterval(fetchData, 100000); // run every 10 sec
+    const interval = setInterval(fetchData, 10000); // run every 10 sec
 
     return () => clearInterval(interval);
 
