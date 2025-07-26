@@ -86,7 +86,7 @@ def route(state: State):
     business_data = get_business_data()
 
     llm = ChatGroq(
-        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.3-70b-versatile"
+        groq_api_key=os.environ["GROQ_Key"], model_name="meta-llama/llama-4-maverick-17b-128e-instruct"
     )
 
     # Extract keywords from the business name and data
@@ -130,7 +130,7 @@ def route(state: State):
 
     # print("Route Prompt : ", route_prompt)
     llm = ChatGroq(
-        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.3-70b-versatile"
+        groq_api_key=os.environ["GROQ_Key"], model_name="meta-llama/llama-4-maverick-17b-128e-instruct"
     )
 
     llm = llm.with_structured_output(RouteQuery)
@@ -214,7 +214,7 @@ def history_retriver(state: State):
     query = state["messages"][-1].content
 
     llm = ChatGroq(
-        groq_api_key=os.environ["GROQ_Key"], model_name="llama-3.3-70b-versatile"
+        groq_api_key=os.environ["GROQ_Key"], model_name="meta-llama/llama-4-maverick-17b-128e-instruct"
     )
     history_data = ""
     # Add the latest message to the history
@@ -277,7 +277,7 @@ def history_retriver(state: State):
 llm = ChatGroq(
     groq_api_key=os.environ["GROQ_Key"],
     # model_name = 'llama-3.3-70b-versatile'
-    model_name="llama-3.3-70b-versatile",
+    model_name="meta-llama/llama-4-maverick-17b-128e-instruct",
 )
 
 
@@ -286,8 +286,6 @@ def chatbot(state: State):
     print("Reached Chatbot")
     system_prompt = get_system_prompt()
 
-    
-    
 
     context = " ".join(state["context_docs"]).join(state["history_docs"])
 

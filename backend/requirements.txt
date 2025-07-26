@@ -22,3 +22,5 @@ fitz
 pymupdf
 wikipedia
 flask-socketio 
+gevent 
+gevent-websocket
