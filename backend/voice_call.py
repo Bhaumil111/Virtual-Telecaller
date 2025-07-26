@@ -19,7 +19,8 @@ from flask_socketio import SocketIO, emit
 # Initialize the Flask app
 load_dotenv()
 app = Flask(__name__)
-CORS(app ,origins= "*")  # Allow all origins for CORS
+# CORS(app ,origins= "*")  # Allow all origins for CORS
+CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
 userdata = {}
 
