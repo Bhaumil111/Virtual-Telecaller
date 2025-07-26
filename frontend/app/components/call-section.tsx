@@ -56,7 +56,8 @@ export function CallSection() {
 
         try {
             
-            const response = await fetch("http://127.0.0.1:5000/information", {
+            // const response = await fetch("http://127.0.0.1:5000/information", {
+            const response = await fetch("https://virtual-telecaller.onrender.com/information", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -89,7 +90,8 @@ export function CallSection() {
 
                 try {
 
-                    const callResponse = await fetch("http://127.0.0.1:5000/make_call", {
+                    // const callResponse = await fetch("http://127.0.0.1:5000/make_call", {
+                    const callResponse = await fetch("https://virtual-telecaller.onrender.com/make_call", {
                         method: "GET",
                     });
 

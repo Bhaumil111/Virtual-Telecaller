@@ -402,6 +402,6 @@ if __name__ == "__main__":
     # Start the Flask app with SocketIO
     host = "0.0.0.0"
     port = int(os.getenv("PORT", 5000))  # Use PORT from environment or default to 5000
-    socketio.run(app, host=host, port=port, debug=False, use_reloader=False)
+    socketio.run(app, host=host, port=port, debug=False, use_reloader=False, allow_unsafe_werkzeug=True)
 
     # app.run(port=5000, debug=False, use_reloader=False)
