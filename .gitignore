@@ -23,9 +23,5 @@ __pycache__/
 
 
 
-/backend/data/rag_data.txt
-/backend/data/system_prompt.txt
 
-**/rag_data.txt
-**/system_prompt.txt
 
